@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Générateur de CV HECG - Final</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --hecg-teal: #70a5aa;
+            --hecg-navy: #3f5071;
+            --hecg-dark: #22475d;
+            --hecg-orange: #ed7d31;
+            --gradient: linear-gradient(180deg, #70a5aa 0%, #22475d 100%);
+            --line-width: 1px;
+        }
+
+        body { font-family: 'Segoe UI', sans-serif; margin: 0; display: flex; height: 100vh; background: #e9ecef; }
+
+        /* --- ÉCRAN DE CONNEXION --- */
+        #login-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--hecg-dark); display: flex; flex-direction: column;
+            align-items: center; justify-content: center; z-index: 9999;
+            color: white; text-align: center;
+        }
+        .login-box { background: white; padding: 30px; border-radius: 8px; width: 320px; display: flex; flex-direction: column; gap: 15px; }
+        .login-box input { padding: 12px; border: 1px solid #ccc; border-radius: 4px; text-align: center; font-size: 1.1rem; width: 100%; box-sizing: border-box; }
+        .login-box button { background: var(--hecg-orange); color: white; border: none; padding: 12px; border-radius: 4px; cursor: pointer; font-weight: bold; }
+
+        /* --- APPLICATION (MASQUÉE PAR DÉFAUT) --- */
+        #app-content { display: none; width: 100%; height: 100%; }
+        #form-side { width: 40%; padding: 25px; overflow-y: auto; background: white; border-right: 4px solid var(--hecg-dark); }
+        #preview-side { width: 60%; display: flex; justify-content: center; padding: 20px; overflow-y: auto; }
+
+        .form-section { border-bottom: 2px solid #eee; padding-bottom: 20px; margin-bottom: 20px; }
+        h3 { color: var(--hecg-dark); border-left: 5px solid var(--hecg-orange); padding-left: 10px; margin-top: 0; font-size: 1.1rem; }
+        label { display: block; font-weight: bold; margin: 10px 0 5px; font-size: 0.85rem; }
+        input, select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; font-size: 0.9rem; }
+        
+        .checkbox-group { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 0.8rem; background: #f8f9fa; padding: 10px; border-radius: 5px; margin-bottom: 10px; }
+        .checkbox-group div { display: flex; align-items: center; }
+        .checkbox-group input { width: auto; margin-right: 8px; }
+
+        .dynamic-block { background: #f1f3f5; padding: 15px; border-radius: 5px; margin-top: 10px; border: 1px dashed var(--hecg-teal); }
+        .mission-row { margin-top: 5px; display: flex; gap: 5px; align-items: center; }
+        .btn-action { background: var(--hecg-teal); color: white; padding: 8px 12px; border: none; border-radius: 4px; cursor: pointer; margin-top: 10px; font-weight: bold; font-size: 0.8rem; width: 100%; }
+        .btn-generate { background: var(--hecg-orange); color: white; padding: 18px; border: none; width: 100%; cursor: pointer; font-weight: bold; font-size: 1.1rem; margin-top: 30px; border-radius: 6px; }
+
+        /* --- STYLE DU CV --- */
+        #cv-page { 
+            width: 210mm; height: 297mm; min-height: 297mm;
+            background: white; position: relative;
+            display: flex; flex-direction: column; 
+            box-shadow: 0 0 25px rgba(0,0,0,0.25);
+            box-sizing: border-box;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        .logo-hecg { position: absolute; top: 40px; right: 50px; width: 130px; z-index: 10; }
+        .cv-header { display: flex; padding: 45px 50px 30px; align-items: center; }
+        .photo-wrap { width: 145px; height: 145px; padding: 4px; background: var(--gradient); display: flex; justify-content: center; align-items: center; }
+        .photo-wrap img { width: 100%; height: 100%; object-fit: cover; background: #fff; }
+        
+        .header-main { flex: 1; margin-left: 30px; overflow: hidden; }
+        /* Police adaptative pour le nom */
+        .p-name { color: var(--hecg-teal); font-weight: bold; text-transform: uppercase; margin: 0; line-height: 1.1; white-space: nowrap; }
+        .p-age { font-size: 20px; color: var(--hecg-navy); margin-bottom: 12px; }
+        .p-search { color: var(--hecg-navy); font-size: 18px; margin: 5px 0; line-height: 1.3; max-width: 440px; }
+        
+        .contact-bar { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 13px; color: #444; margin-top: 20px; }
+        .contact-item { display: flex; align-items: center; gap: 10px; }
+        .contact-item i { color: var(--hecg-navy); font-size: 14px; width: 18px; text-align: center; }
+
+        .cv-container { display: flex; flex: 1; padding: 0 50px 40px; gap: 40px; position: relative; }
+        .col-left { width: 34%; }
+        
+        /* La barre orange verticale s'aligne pile sur le haut des encadrés */
+        .col-right { 
+            width: 66%; 
+            border-left: var(--line-width) solid var(--hecg-orange); 
+            padding-left: 30px; 
+            margin-top: 30px; 
+        }
+
+        .section-box { 
+            background: var(--gradient) !important; color: white !important; padding: 10px 15px; 
+            text-transform: uppercase; font-weight: bold; font-size: 15px; margin: 0 0 15px;
+            position: relative;
+        }
+
+        .col-left .section-box { margin-top: 30px; }
+        
+        /* Lignes horizontales s'arrêtant pile au bord */
+        .col-left .section-box::after { content: ""; position: absolute; top: 0; right: -41px; width: 41px; height: var(--line-width); background: var(--hecg-orange); }
+        .col-right .section-box::before { content: ""; position: absolute; top: 0; left: -31px; width: 31px; height: var(--line-width); background: var(--hecg-orange); }
+
+        .cv-block { margin-bottom: 22px; }
+        .cv-title { font-weight: bold; font-size: 16px; color: var(--hecg-navy); display: flex; justify-content: space-between; }
+        .cv-sub { font-size: 14px; color: #555; font-style: italic; margin-bottom: 5px; }
+        ul { padding-left: 20px; margin: 5px 0; list-style: none; }
+        li { font-size: 14px; color: var(--hecg-navy); margin-bottom: 4px; position: relative; line-height: 1.4; }
+        li::before { content: "•"; color: var(--hecg-orange); font-weight: bold; position: absolute; left: -15px; }
+
+        .footer-cv { margin-top: auto; padding-top: 15px; }
+        .edition-stamp { position: absolute; bottom: 15px; right: 20px; font-size: 10px; color: #aaa; }
+
+        @media print {
+            @page { size: A4; margin: 0; }
+            body { background: white; height: auto; }
+            #form-side, #login-screen { display: none !important; }
+            #preview-side { width: 100%; padding: 0; margin: 0; overflow: visible; }
+            #cv-page { box-shadow: none; margin: 0; border: none; width: 210mm; height: 297mm; }
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+        }
+    </style>
+</head>
+<body onload="init()">
+
+<div id="login-screen">
+    <img src="https://hecg.fr/wp-content/uploads/2025/03/LOGO-FORMAT-PNG-1-1.png" style="width: 150px; margin-bottom: 25px;">
+    <h1>Accès Étudiant HECG</h1>
+    <p style="margin-bottom: 20px; font-style: italic;">Veuillez saisir votre code personnel de suivi</p>
+    <div class="login-box">
+        <input type="password" id="access-code" placeholder="Code d'accès">
+        <button onclick="checkAccess()">ENTRER</button>
+    </div>
+    <p id="login-error" style="color: #ff4d4d; margin-top: 15px; display: none;">Code non homologué.</p>
+</div>
+
+<div id="app-content">
+    <div id="form-side">
+        <h2 style="text-align: center; color: var(--hecg-dark);">Générateur de CV</h2>
+        
+        <div class="form-section">
+            <h3>1. Profil & Photo</h3>
+            <input type="text" id="nom" placeholder="NOM" oninput="render()">
+            <input type="text" id="prenom" placeholder="Prénom" oninput="render()">
+            <label>Date de Naissance</label>
+            <input type="date" id="dob" oninput="render()">
+            <label>LinkedIn (Obligatoire)</label>
+            <input type="text" id="linkedin" placeholder="Lien profil" oninput="render()">
+            <label>Photo</label>
+            <input type="file" onchange="uploadImage(this)">
+        </div>
+
+        <div class="form-section">
+            <h3>2. Formation & École</h3>
+            <select id="diplome_select" onchange="render()">
+                <option value="BTS GPME 1">BTS GPME 1</option>
+                <option value="BTS GPME 2">BTS GPME 2</option>
+                <option value="BTS CG 1">BTS CG 1</option>
+                <option value="BTS CG 2">BTS CG 2</option>
+                <option value="DCG 1">DCG 1</option>
+                <option value="DCG 2">DCG 2</option>
+                <option value="DCG 3">DCG 3</option>
+                <option value="DSCG">DSCG</option>
+            </select>
+            <input type="text" id="tel" placeholder="Téléphone" oninput="render()">
+            <input type="email" id="email" placeholder="Email" oninput="render()">
+            <input type="text" id="ville" placeholder="Ville / Mobilité" oninput="render()">
+            <select id="vehicule" onchange="render()">
+                <option value="Oui">Véhiculé : Oui</option>
+                <option value="Non">Véhiculé : Non</option>
+            </select>
+            <div id="edu-inputs"></div>
+            <button class="btn-action" onclick="addEdu()">+ Ajouter formation supplémentaire</button>
+        </div>
+
+        <div class="form-section">
+            <h3>3. Expériences Professionnelles (Max 4)</h3>
+            <div id="exp-inputs"></div>
+            <button class="btn-action" onclick="addExp()">+ Ajouter expérience</button>
+        </div>
+
+        <div class="form-section">
+            <h3>4. Compétences & Centres d'intérêt</h3>
+            <label>Soft Skills (Max 4)</label>
+            <div class="checkbox-group" id="soft-checks"></div>
+            <label>Compétences Métier (Max 4)</label>
+            <div class="checkbox-group" id="hard-checks"></div>
+            <input type="text" id="logiciels" placeholder="Logiciels Comptables" oninput="render()" style="margin-bottom:5px">
+            <input type="text" id="info_extra" placeholder="Autre informatique" oninput="render()">
+            <label>Centres d'intérêt (Max 3)</label>
+            <div class="checkbox-group" id="hobby-checks"></div>
+            <input type="text" id="hobby_extra" placeholder="Champ libre" oninput="render()">
+        </div>
+
+        <button class="btn-generate" onclick="finalValidation()">🚀 GÉNÉRER LE CV (PDF)</button>
+    </div>
+
+    <div id="preview-side">
+        <div id="cv-page">
+            <img class="logo-hecg" src="https://hecg.fr/wp-content/uploads/2025/03/LOGO-FORMAT-PNG-1-1.png">
+            <div class="cv-header">
+                <div class="photo-wrap"><img id="cv-img" src="https://via.placeholder.com/150?text=PHOTO"></div>
+                <div class="header-main">
+                    <h1 class="p-name" id="out-full-name">NOM PRÉNOM</h1>
+                    <div class="p-age"><span id="out-age">--</span> ans</div>
+                    <div class="p-search">Recherche une alternance en <b id="out-dip-label">--</b><br>Rythme 2j à l'école / 3j en entreprise</div>
+                    <div class="contact-bar">
+                        <div class="contact-item"><i class="fa fa-phone"></i> <span id="out-tel">06 00 00 00 00</span></div>
+                        <div class="contact-item"><i class="fab fa-linkedin"></i> <span id="out-linkedin">LinkedIn</span></div>
+                        <div class="contact-item"><i class="fa fa-envelope"></i> <span id="out-email">email@etudiant.fr</span></div>
+                        <div class="contact-item"><i class="fa fa-car"></i> <span id="out-car">Véhiculé : Oui</span></div>
+                        <div class="contact-item"><i class="fa fa-map-marker-alt"></i> <span id="out-ville">Marseille</span></div>
+                    </div>
+                </div>
+            </div>
+            <div class="cv-container">
+                <div class="col-left">
+                    <div class="section-box">Soft Skills</div>
+                    <ul id="out-soft"></ul>
+                    <div class="section-box">Compétences</div>
+                    <ul id="out-hard"></ul>
+                    <div class="section-box">Informatique</div>
+                    <ul>
+                        <li>Pack Office (Word, Excel, PPT)</li>
+                        <li id="li-logiciels">Logiciels : <span id="out-logiciels">--</span></li>
+                        <li id="li-info-extra">Autre : <span id="out-info-extra">--</span></li>
+                    </ul>
+                    <div class="section-box">Centres d'intérêt</div>
+                    <ul id="out-hobbies"></ul>
+                </div>
+                <div class="col-right">
+                    <div class="section-box">Formations</div>
+                    <div class="cv-block">
+                        <div class="cv-title">HECG MARSEILLE <span id="out-dip-year">2026-2028</span></div>
+                        <div class="cv-sub">Étudiant en <span class="dyn-dip-name">--</span></div>
+                        <div style="font-size:12px; color:#888">Formation en cours</div>
+                    </div>
+                    <div id="out-edu-list"></div>
+                    <div class="section-box">Expériences Professionnelles</div>
+                    <div id="out-exp-list"></div>
+                    <div class="footer-cv">
+                        <div class="section-box">Contact École</div>
+                        <div style="font-size:12.5px; color: var(--hecg-navy);">
+                            <b>M. BENMOSTEFA - Directeur</b><br>📞 06 25 43 53 90 | 📧 contact@hecg.fr<br>🌐 www.hecg.fr
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="edition-stamp">Date d'édition : <span id="out-date"></span></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const apiUrl = "https://script.google.com/macros/s/AKfycbyhCy3RFGQ9FuD7m8-B_b8r4E8YJ3W1hBjiUhTRADDksVQr5Qolh86JB4jzOOQEYPHc4w/exec";
+    const db = {
+        soft: ["Rigueur", "Autonomie", "Esprit d'équipe", "Organisation", "Patience", "Réactivité", "Discrétion"],
+        hard: ["Saisie comptable", "Fiscalité", "Paie", "Analyse financière", "Audit", "TVA", "Bilan"],
+        hobbies: ["Voyage", "Sport", "Cuisine", "Cinéma", "Musique", "Lecture", "Photographie"],
+        years: {
+            "BTS GPME 1": "2026-2028", "BTS CG 1": "2026-2028",
+            "BTS GPME 2": "2026-2027", "BTS CG 2": "2026-2027",
+            "DCG 1": "2026-2029", "DCG 2": "2026-2028", "DCG 3": "2026-2027", "DSCG": "2026-2028"
+        }
+    };
+
+    let expCt = 0, eduCt = 0;
+
+    function init() {
+        genChecks('soft-checks', db.soft, 'soft', 4);
+        genChecks('hard-checks', db.hard, 'hard', 4);
+        genChecks('hobby-checks', db.hobbies, 'hobby', 3);
+        document.getElementById('out-date').innerText = new Date().toLocaleDateString();
+        render();
+    }
+
+    async function checkAccess() {
+        const code = document.getElementById('access-code').value;
+        const btn = document.querySelector('.login-box button');
+        const err = document.getElementById('login-error');
+        if (!code) return;
+        btn.innerText = "Vérification..."; btn.disabled = true;
+        try {
+            const res = await fetch(apiUrl + "?code=" + encodeURIComponent(code));
+            const data = await res.json();
+            if (data.valid) {
+                document.getElementById('login-screen').style.display = 'none';
+                document.getElementById('app-content').style.display = 'flex';
+                render();
+            } else { err.style.display = 'block'; }
+        } catch (e) { alert("Erreur serveur."); } finally { btn.innerText = "ENTRER"; btn.disabled = false; }
+    }
+
+    function render() {
+        const full = (document.getElementById('nom').value + " " + document.getElementById('prenom').value).trim() || "NOM PRÉNOM";
+        const outName = document.getElementById('out-full-name');
+        outName.innerText = full;
+        outName.style.fontSize = full.length > 20 ? "28px" : "38px";
+
+        const dob = document.getElementById('dob').value;
+        if(dob) document.getElementById('out-age').innerText = Math.floor((new Date() - new Date(dob)) / 31557600000);
+
+        const dip = document.getElementById('diplome_select').value;
+        document.getElementById('out-dip-label').innerText = dip;
+        document.querySelectorAll('.dyn-dip-name').forEach(e => e.innerText = dip);
+        document.getElementById('out-dip-year').innerText = db.years[dip];
+
+        document.getElementById('out-tel').innerText = document.getElementById('tel').value || "06 00 00 00 00";
+        document.getElementById('out-email').innerText = document.getElementById('email').value || "email@etudiant.fr";
+        document.getElementById('out-ville').innerText = document.getElementById('ville').value || "Marseille";
+        document.getElementById('out-linkedin').innerText = document.getElementById('linkedin').value || "LinkedIn";
+        document.getElementById('out-car').innerText = "Véhiculé : " + document.getElementById('vehicule').value;
+
+        sync('soft', 'out-soft'); sync('hard', 'out-hard'); sync('hobby', 'out-hobbies', 'hobby_extra');
+        
+        const log = document.getElementById('logiciels').value;
+        document.getElementById('li-logiciels').style.display = log ? 'list-item' : 'none';
+        document.getElementById('out-logiciels').innerText = log;
+        const ext = document.getElementById('info_extra').value;
+        document.getElementById('li-info-extra').style.display = ext ? 'list-item' : 'none';
+        document.getElementById('out-info-extra').innerText = ext;
+
+        renderBlocks('edu-inputs', 'out-edu-list', false);
+        renderBlocks('exp-inputs', 'out-exp-list', true);
+    }
+
+    function genChecks(id, list, name, limit) {
+        const box = document.getElementById(id);
+        list.forEach(i => {
+            box.innerHTML += `<div><input type="checkbox" name="${name}" value="${i}" onchange="checkLim(this, ${limit})"> ${i}</div>`;
+        });
+    }
+
+    function checkLim(el, limit) {
+        if(document.querySelectorAll(`input[name="${el.name}"]:checked`).length > limit) { el.checked = false; alert("Limite atteinte."); }
+        render();
+    }
+
+    function addExp() {
+        if(expCt >= 4) return; expCt++;
+        const div = document.createElement('div'); div.className = 'dynamic-block';
+        div.innerHTML = `<input type="text" placeholder="Poste" oninput="render()"><input type="text" placeholder="Entreprise" oninput="render()" style="margin:5px 0"><input type="text" placeholder="Année" oninput="render()">
+            <div class="mission-row"><input type="text" placeholder="Mission 1" oninput="render()"></div><div class="mission-row"><input type="text" placeholder="Mission 2" oninput="render()"></div><div class="mission-row"><input type="text" placeholder="Mission 3" oninput="render()"></div>`;
+        document.getElementById('exp-inputs').appendChild(div);
+    }
+
+    function addEdu() {
+        if(eduCt >= 2) return; eduCt++;
+        const div = document.createElement('div'); div.className = 'dynamic-block';
+        div.innerHTML = `<input type="text" placeholder="Diplôme" oninput="render()"><input type="text" placeholder="Lieu" oninput="render()" style="margin:5px 0"><input type="text" placeholder="Année" oninput="render()">`;
+        document.getElementById('edu-inputs').appendChild(div);
+    }
+
+    function renderBlocks(inId, outId, isExp) {
+        const list = document.getElementById(outId); list.innerHTML = "";
+        Array.from(document.getElementById(inId).children).forEach(b => {
+            const ins = b.querySelectorAll('input');
+            let m = ""; if(isExp) { [3,4,5].forEach(i => { if(ins[i].value) m += `<li>${ins[i].value}</li>`; }); }
+            list.innerHTML += `<div class="cv-block"><div class="cv-title">${ins[0].value} <span>${ins[2].value}</span></div><div class="cv-sub">${ins[1].value}</div>${m ? `<ul>${m}</ul>` : ""}</div>`;
+        });
+    }
+
+    function sync(name, outId, freeId = null) {
+        const out = document.getElementById(outId); out.innerHTML = "";
+        document.querySelectorAll(`input[name="${name}"]:checked`).forEach(c => out.innerHTML += `<li>${c.value}</li>`);
+        if(freeId) { const v = document.getElementById(freeId).value; if(v) out.innerHTML += `<li>${v}</li>`; }
+    }
+
+    function uploadImage(i) {
+        if (i.files && i.files[0]) {
+            const r = new FileReader(); r.onload = e => document.getElementById('cv-img').src = e.target.result;
+            r.readAsDataURL(i.files[0]);
+        }
+    }
+
+    function finalValidation() {
+        if(!document.getElementById('linkedin').value) return alert("LinkedIn obligatoire.");
+        window.print();
+    }
+</script>
+</body>
+</html>
