@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Générateur de CV HECG - Final</title>
+    <title>Générateur de CV HECG - Final v3</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -28,24 +28,24 @@
         .login-box input { padding: 12px; border: 1px solid #ccc; border-radius: 4px; text-align: center; font-size: 1.1rem; width: 100%; box-sizing: border-box; }
         .login-box button { background: var(--hecg-orange); color: white; border: none; padding: 12px; border-radius: 4px; cursor: pointer; font-weight: bold; }
 
-        /* --- APPLICATION (MASQUÉE PAR DÉFAUT) --- */
+        /* --- APPLICATION --- */
         #app-content { display: none; width: 100%; height: 100%; }
         #form-side { width: 40%; padding: 25px; overflow-y: auto; background: white; border-right: 4px solid var(--hecg-dark); }
-        #preview-side { width: 60%; display: flex; justify-content: center; padding: 20px; overflow-y: auto; }
+        #preview-side { width: 60%; display: flex; justify-content: center; padding: 15px; overflow-y: auto; }
 
-        .form-section { border-bottom: 2px solid #eee; padding-bottom: 20px; margin-bottom: 20px; }
-        h3 { color: var(--hecg-dark); border-left: 5px solid var(--hecg-orange); padding-left: 10px; margin-top: 0; font-size: 1.1rem; }
-        label { display: block; font-weight: bold; margin: 10px 0 5px; font-size: 0.85rem; }
-        input, select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; font-size: 0.9rem; }
+        .form-section { border-bottom: 2px solid #eee; padding-bottom: 15px; margin-bottom: 15px; }
+        h3 { color: var(--hecg-dark); border-left: 5px solid var(--hecg-orange); padding-left: 10px; margin-top: 0; font-size: 1rem; }
+        label { display: block; font-weight: bold; margin: 8px 0 3px; font-size: 0.8rem; }
+        input, select { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; font-size: 0.85rem; }
         
-        .checkbox-group { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 0.8rem; background: #f8f9fa; padding: 10px; border-radius: 5px; margin-bottom: 10px; }
+        .checkbox-group { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; font-size: 0.75rem; background: #f8f9fa; padding: 8px; border-radius: 5px; margin-bottom: 5px; }
         .checkbox-group div { display: flex; align-items: center; }
-        .checkbox-group input { width: auto; margin-right: 8px; }
+        .checkbox-group input { width: auto; margin-right: 6px; }
 
-        .dynamic-block { background: #f1f3f5; padding: 15px; border-radius: 5px; margin-top: 10px; border: 1px dashed var(--hecg-teal); }
-        .mission-row { margin-top: 5px; display: flex; gap: 5px; align-items: center; }
-        .btn-action { background: var(--hecg-teal); color: white; padding: 8px 12px; border: none; border-radius: 4px; cursor: pointer; margin-top: 10px; font-weight: bold; font-size: 0.8rem; width: 100%; }
-        .btn-generate { background: var(--hecg-orange); color: white; padding: 18px; border: none; width: 100%; cursor: pointer; font-weight: bold; font-size: 1.1rem; margin-top: 30px; border-radius: 6px; }
+        .dynamic-block { background: #f1f3f5; padding: 10px; border-radius: 5px; margin-top: 8px; border: 1px dashed var(--hecg-teal); }
+        .mission-row { margin-top: 3px; display: flex; gap: 5px; align-items: center; }
+        .btn-action { background: var(--hecg-teal); color: white; padding: 6px 10px; border: none; border-radius: 4px; cursor: pointer; margin-top: 5px; font-weight: bold; font-size: 0.75rem; width: 100%; }
+        .btn-generate { background: var(--hecg-orange); color: white; padding: 15px; border: none; width: 100%; cursor: pointer; font-weight: bold; font-size: 1rem; margin-top: 20px; border-radius: 6px; }
 
         /* --- STYLE DU CV --- */
         #cv-page { 
@@ -58,53 +58,43 @@
             print-color-adjust: exact;
         }
 
-        .logo-hecg { position: absolute; top: 40px; right: 50px; width: 130px; z-index: 10; }
-        .cv-header { display: flex; padding: 45px 50px 30px; align-items: center; }
-        .photo-wrap { width: 145px; height: 145px; padding: 4px; background: var(--gradient); display: flex; justify-content: center; align-items: center; }
+        .logo-hecg { position: absolute; top: 65px; right: 50px; width: 120px; z-index: 10; }
+        .cv-header { display: flex; padding: 40px 50px 25px; align-items: center; }
+        .photo-wrap { width: 135px; height: 135px; padding: 4px; background: var(--gradient); display: flex; justify-content: center; align-items: center; }
         .photo-wrap img { width: 100%; height: 100%; object-fit: cover; background: #fff; }
         
         .header-main { flex: 1; margin-left: 30px; overflow: hidden; }
-        /* Police adaptative pour le nom */
-        .p-name { color: var(--hecg-teal); font-weight: bold; text-transform: uppercase; margin: 0; line-height: 1.1; white-space: nowrap; }
-        .p-age { font-size: 20px; color: var(--hecg-navy); margin-bottom: 12px; }
-        .p-search { color: var(--hecg-navy); font-size: 18px; margin: 5px 0; line-height: 1.3; max-width: 440px; }
+        .p-name { color: var(--hecg-teal); font-weight: bold; margin: 0; line-height: 1.1; white-space: nowrap; }
+        .p-age { font-size: 18px; color: var(--hecg-navy); margin-bottom: 8px; }
+        .p-search { color: var(--hecg-navy); font-size: 16px; margin: 5px 0; line-height: 1.2; max-width: 420px; }
         
-        .contact-bar { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 13px; color: #444; margin-top: 20px; }
-        .contact-item { display: flex; align-items: center; gap: 10px; }
-        .contact-item i { color: var(--hecg-navy); font-size: 14px; width: 18px; text-align: center; }
+        .contact-bar { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 11.5px; color: #444; margin-top: 15px; }
+        .contact-item { display: flex; align-items: center; gap: 8px; }
+        .contact-item i { color: var(--hecg-navy); font-size: 12px; width: 16px; text-align: center; }
 
-        .cv-container { display: flex; flex: 1; padding: 0 50px 40px; gap: 40px; position: relative; }
-        .col-left { width: 34%; }
-        
-        /* La barre orange verticale s'aligne pile sur le haut des encadrés */
-        .col-right { 
-            width: 66%; 
-            border-left: var(--line-width) solid var(--hecg-orange); 
-            padding-left: 30px; 
-            margin-top: 30px; 
-        }
+        .cv-container { display: flex; flex: 1; padding: 0 50px 30px; gap: 35px; position: relative; }
+        .col-left { width: 34%; display: flex; flex-direction: column; }
+        .col-right { width: 66%; border-left: var(--line-width) solid var(--hecg-orange); padding-left: 25px; margin-top: 25px; }
 
         .section-box { 
-            background: var(--gradient) !important; color: white !important; padding: 10px 15px; 
-            text-transform: uppercase; font-weight: bold; font-size: 15px; margin: 0 0 15px;
+            background: var(--gradient) !important; color: white !important; padding: 8px 12px; 
+            text-transform: uppercase; font-weight: bold; font-size: 13px; margin: 0 0 12px;
             position: relative;
         }
 
-        .col-left .section-box { margin-top: 30px; }
-        
-        /* Lignes horizontales s'arrêtant pile au bord */
-        .col-left .section-box::after { content: ""; position: absolute; top: 0; right: -41px; width: 41px; height: var(--line-width); background: var(--hecg-orange); }
-        .col-right .section-box::before { content: ""; position: absolute; top: 0; left: -31px; width: 31px; height: var(--line-width); background: var(--hecg-orange); }
+        .col-left .section-box { margin-top: 25px; }
+        .col-left .section-box::after { content: ""; position: absolute; top: 0; right: -36px; width: 36px; height: var(--line-width); background: var(--hecg-orange); }
+        .col-right .section-box::before { content: ""; position: absolute; top: 0; left: -26px; width: 26px; height: var(--line-width); background: var(--hecg-orange); }
 
-        .cv-block { margin-bottom: 22px; }
-        .cv-title { font-weight: bold; font-size: 16px; color: var(--hecg-navy); display: flex; justify-content: space-between; }
-        .cv-sub { font-size: 14px; color: #555; font-style: italic; margin-bottom: 5px; }
-        ul { padding-left: 20px; margin: 5px 0; list-style: none; }
-        li { font-size: 14px; color: var(--hecg-navy); margin-bottom: 4px; position: relative; line-height: 1.4; }
-        li::before { content: "•"; color: var(--hecg-orange); font-weight: bold; position: absolute; left: -15px; }
+        .cv-block { margin-bottom: 18px; }
+        .cv-title { font-weight: bold; font-size: 14px; color: var(--hecg-navy); display: flex; justify-content: space-between; }
+        .cv-sub { font-size: 12.5px; color: #555; font-style: italic; margin-bottom: 3px; }
+        ul { padding-left: 18px; margin: 4px 0; list-style: none; }
+        li { font-size: 12px; color: var(--hecg-navy); margin-bottom: 3px; position: relative; line-height: 1.3; }
+        li::before { content: "•"; color: var(--hecg-orange); font-weight: bold; position: absolute; left: -14px; }
 
-        .footer-cv { margin-top: auto; padding-top: 15px; }
-        .edition-stamp { position: absolute; bottom: 15px; right: 20px; font-size: 10px; color: #aaa; }
+        .footer-cv { margin-top: auto; padding-top: 10px; }
+        .edition-stamp { position: absolute; bottom: 12px; right: 20px; font-size: 9px; color: #aaa; }
 
         @media print {
             @page { size: A4; margin: 0; }
@@ -119,9 +109,9 @@
 <body onload="init()">
 
 <div id="login-screen">
-    <img src="https://hecg.fr/wp-content/uploads/2025/03/LOGO-FORMAT-PNG-1-1.png" style="width: 150px; margin-bottom: 25px;">
+    <img src="https://hecg.fr/wp-content/uploads/2025/03/LOGO-FORMAT-PNG-1-1.png" style="width: 140px; margin-bottom: 20px;">
     <h1>Accès Étudiant HECG</h1>
-    <p style="margin-bottom: 20px; font-style: italic;">Veuillez saisir votre code personnel de suivi</p>
+    <p style="margin-bottom: 20px; font-style: italic;">Saisissez votre code personnel de suivi</p>
     <div class="login-box">
         <input type="password" id="access-code" placeholder="Code d'accès">
         <button onclick="checkAccess()">ENTRER</button>
@@ -131,7 +121,7 @@
 
 <div id="app-content">
     <div id="form-side">
-        <h2 style="text-align: center; color: var(--hecg-dark);">Générateur de CV</h2>
+        <h2 style="text-align: center; color: var(--hecg-dark); font-size: 1.3rem;">Configurateur de CV</h2>
         
         <div class="form-section">
             <h3>1. Profil & Photo</h3>
@@ -161,11 +151,11 @@
             <input type="email" id="email" placeholder="Email" oninput="render()">
             <input type="text" id="ville" placeholder="Ville / Mobilité" oninput="render()">
             <select id="vehicule" onchange="render()">
-                <option value="Oui">Véhiculé : Oui</option>
-                <option value="Non">Véhiculé : Non</option>
+                <option value="Oui">Véhiculé(e) : Oui</option>
+                <option value="Non">Véhiculé(e) : Non</option>
             </select>
             <div id="edu-inputs"></div>
-            <button class="btn-action" onclick="addEdu()">+ Ajouter formation supplémentaire</button>
+            <button class="btn-action" onclick="addEdu()">+ Ajouter une formation</button>
         </div>
 
         <div class="form-section">
@@ -178,13 +168,28 @@
             <h3>4. Compétences & Centres d'intérêt</h3>
             <label>Soft Skills (Max 4)</label>
             <div class="checkbox-group" id="soft-checks"></div>
-            <label>Compétences Métier (Max 4)</label>
+            <input type="text" id="soft_extra" placeholder="Autre Soft Skill (Choix libre)" oninput="render()">
+            
+            <label style="margin-top:10px">Compétences Métier (Max 4)</label>
             <div class="checkbox-group" id="hard-checks"></div>
+            <input type="text" id="hard_extra" placeholder="Autre Compétence (Choix libre)" oninput="render()">
+            
+            <label style="margin-top:10px">Informatique</label>
+            <div class="checkbox-group">
+                <div><input type="checkbox" id="check-office" checked onchange="render()"> Pack Office (Word, Excel, PPT)</div>
+            </div>
             <input type="text" id="logiciels" placeholder="Logiciels Comptables" oninput="render()" style="margin-bottom:5px">
             <input type="text" id="info_extra" placeholder="Autre informatique" oninput="render()">
-            <label>Centres d'intérêt (Max 3)</label>
+            
+            <label style="margin-top:10px">Centres d'intérêt (Max 3)</label>
             <div class="checkbox-group" id="hobby-checks"></div>
-            <input type="text" id="hobby_extra" placeholder="Champ libre" oninput="render()">
+            <input type="text" id="hobby_extra" placeholder="Autre centre d'intérêt (Choix libre)" oninput="render()">
+        </div>
+
+        <div class="form-section">
+            <h3>5. Langues</h3>
+            <div id="lang-inputs"></div>
+            <button class="btn-action" onclick="addLang()">+ Ajouter une langue</button>
         </div>
 
         <button class="btn-generate" onclick="finalValidation()">🚀 GÉNÉRER LE CV (PDF)</button>
@@ -196,14 +201,14 @@
             <div class="cv-header">
                 <div class="photo-wrap"><img id="cv-img" src="https://via.placeholder.com/150?text=PHOTO"></div>
                 <div class="header-main">
-                    <h1 class="p-name" id="out-full-name">NOM PRÉNOM</h1>
+                    <h1 class="p-name" id="out-full-name">NOM Prénom</h1>
                     <div class="p-age"><span id="out-age">--</span> ans</div>
                     <div class="p-search">Recherche une alternance en <b id="out-dip-label">--</b><br>Rythme 2j à l'école / 3j en entreprise</div>
                     <div class="contact-bar">
                         <div class="contact-item"><i class="fa fa-phone"></i> <span id="out-tel">06 00 00 00 00</span></div>
                         <div class="contact-item"><i class="fab fa-linkedin"></i> <span id="out-linkedin">LinkedIn</span></div>
                         <div class="contact-item"><i class="fa fa-envelope"></i> <span id="out-email">email@etudiant.fr</span></div>
-                        <div class="contact-item"><i class="fa fa-car"></i> <span id="out-car">Véhiculé : Oui</span></div>
+                        <div class="contact-item"><i class="fa fa-car"></i> <span id="out-car">Véhiculé(e) : Oui</span></div>
                         <div class="contact-item"><i class="fa fa-map-marker-alt"></i> <span id="out-ville">Marseille</span></div>
                     </div>
                 </div>
@@ -212,33 +217,37 @@
                 <div class="col-left">
                     <div class="section-box">Soft Skills</div>
                     <ul id="out-soft"></ul>
+                    
                     <div class="section-box">Compétences</div>
                     <ul id="out-hard"></ul>
+                    
                     <div class="section-box">Informatique</div>
-                    <ul>
-                        <li>Pack Office (Word, Excel, PPT)</li>
-                        <li id="li-logiciels">Logiciels : <span id="out-logiciels">--</span></li>
-                        <li id="li-info-extra">Autre : <span id="out-info-extra">--</span></li>
-                    </ul>
+                    <ul id="out-info"></ul>
+
+                    <div class="section-box">Langues</div>
+                    <ul id="out-langs"></ul>
+
                     <div class="section-box">Centres d'intérêt</div>
                     <ul id="out-hobbies"></ul>
+
+                    <div class="footer-cv">
+                        <div class="section-box">Contact École</div>
+                        <div style="font-size:11.5px; color: var(--hecg-navy); line-height: 1.5; padding-left: 5px;">
+                            <b>M. BENMOSTEFA - Directeur</b><br>📞 06 25 43 53 90<br>📧 contact@hecg.fr<br>🌐 www.hecg.fr
+                        </div>
+                    </div>
                 </div>
                 <div class="col-right">
                     <div class="section-box">Formations</div>
                     <div class="cv-block">
                         <div class="cv-title">HECG MARSEILLE <span id="out-dip-year">2026-2028</span></div>
                         <div class="cv-sub">Étudiant en <span class="dyn-dip-name">--</span></div>
-                        <div style="font-size:12px; color:#888">Formation en cours</div>
+                        <div style="font-size:11px; color:#888">Formation en cours</div>
                     </div>
                     <div id="out-edu-list"></div>
+                    
                     <div class="section-box">Expériences Professionnelles</div>
                     <div id="out-exp-list"></div>
-                    <div class="footer-cv">
-                        <div class="section-box">Contact École</div>
-                        <div style="font-size:12.5px; color: var(--hecg-navy);">
-                            <b>M. BENMOSTEFA - Directeur</b><br>📞 06 25 43 53 90 | 📧 contact@hecg.fr<br>🌐 www.hecg.fr
-                        </div>
-                    </div>
                 </div>
             </div>
             <div class="edition-stamp">Date d'édition : <span id="out-date"></span></div>
@@ -249,9 +258,14 @@
 <script>
     const apiUrl = "https://script.google.com/macros/s/AKfycbyhCy3RFGQ9FuD7m8-B_b8r4E8YJ3W1hBjiUhTRADDksVQr5Qolh86JB4jzOOQEYPHc4w/exec";
     const db = {
-        soft: ["Rigueur", "Autonomie", "Esprit d'équipe", "Organisation", "Patience", "Réactivité", "Discrétion"],
-        hard: ["Saisie comptable", "Fiscalité", "Paie", "Analyse financière", "Audit", "TVA", "Bilan"],
+        soft: ["Rigueur", "Autonomie", "Esprit d'équipe", "Organisation", "Patience", "Réactivité", "Discrétion", "Capacité d'adaptation"],
+        hard: ["Saisie comptable", "Fiscalité", "Paie", "Analyse financière", "Audit", "TVA", "Bilan", "Rapprochement bancaire"],
         hobbies: ["Voyage", "Sport", "Cuisine", "Cinéma", "Musique", "Lecture", "Photographie"],
+        langs: ["Anglais", "Italien", "Espagnol", "Allemand", "Arabe", "Chinois", "Russe", "Autre"],
+        levels: {
+            "A1": "A1 - Débutant", "A2": "A2 - Élémentaire", "B1": "B1 - Intermédiaire",
+            "B2": "B2 - Intermédiaire avancé", "C1": "C1 - Autonome", "C2": "C2 - Maîtrise"
+        },
         years: {
             "BTS GPME 1": "2026-2028", "BTS CG 1": "2026-2028",
             "BTS GPME 2": "2026-2027", "BTS CG 2": "2026-2027",
@@ -259,7 +273,7 @@
         }
     };
 
-    let expCt = 0, eduCt = 0;
+    let expCt = 0, eduCt = 0, langCt = 0;
 
     function init() {
         genChecks('soft-checks', db.soft, 'soft', 4);
@@ -272,7 +286,6 @@
     async function checkAccess() {
         const code = document.getElementById('access-code').value;
         const btn = document.querySelector('.login-box button');
-        const err = document.getElementById('login-error');
         if (!code) return;
         btn.innerText = "Vérification..."; btn.disabled = true;
         try {
@@ -282,15 +295,25 @@
                 document.getElementById('login-screen').style.display = 'none';
                 document.getElementById('app-content').style.display = 'flex';
                 render();
-            } else { err.style.display = 'block'; }
+            } else { document.getElementById('login-error').style.display = 'block'; }
         } catch (e) { alert("Erreur serveur."); } finally { btn.innerText = "ENTRER"; btn.disabled = false; }
     }
 
     function render() {
-        const full = (document.getElementById('nom').value + " " + document.getElementById('prenom').value).trim() || "NOM PRÉNOM";
+        const nomRaw = document.getElementById('nom').value.toUpperCase();
+        let prenomRaw = document.getElementById('prenom').value;
+        // Formatage Prénom : Première lettre Maj, reste Min
+        prenomRaw = prenomRaw.charAt(0).toUpperCase() + prenomRaw.slice(1).toLowerCase();
+        
+        const full = (nomRaw + " " + prenomRaw).trim() || "NOM Prénom";
         const outName = document.getElementById('out-full-name');
         outName.innerText = full;
-        outName.style.fontSize = full.length > 20 ? "28px" : "38px";
+        
+        // Taille adaptative
+        let size = 34;
+        if(full.length > 25) size = 20;
+        else if(full.length > 18) size = 26;
+        outName.style.fontSize = size + "px";
 
         const dob = document.getElementById('dob').value;
         if(dob) document.getElementById('out-age').innerText = Math.floor((new Date() - new Date(dob)) / 31557600000);
@@ -304,16 +327,27 @@
         document.getElementById('out-email').innerText = document.getElementById('email').value || "email@etudiant.fr";
         document.getElementById('out-ville').innerText = document.getElementById('ville').value || "Marseille";
         document.getElementById('out-linkedin').innerText = document.getElementById('linkedin').value || "LinkedIn";
-        document.getElementById('out-car').innerText = "Véhiculé : " + document.getElementById('vehicule').value;
+        document.getElementById('out-car').innerText = "Véhiculé(e) : " + document.getElementById('vehicule').value;
 
-        sync('soft', 'out-soft'); sync('hard', 'out-hard'); sync('hobby', 'out-hobbies', 'hobby_extra');
-        
+        // Listes
+        sync('soft', 'out-soft', 'soft_extra');
+        sync('hard', 'out-hard', 'hard_extra');
+        sync('hobby', 'out-hobbies', 'hobby_extra');
+
+        // Informatique
+        const outInfo = document.getElementById('out-info'); outInfo.innerHTML = "";
+        if(document.getElementById('check-office').checked) outInfo.innerHTML += "<li>Pack Office (Word, Excel, PPT)</li>";
         const log = document.getElementById('logiciels').value;
-        document.getElementById('li-logiciels').style.display = log ? 'list-item' : 'none';
-        document.getElementById('out-logiciels').innerText = log;
+        if(log) outInfo.innerHTML += "<li>Logiciels : " + log + "</li>";
         const ext = document.getElementById('info_extra').value;
-        document.getElementById('li-info-extra').style.display = ext ? 'list-item' : 'none';
-        document.getElementById('out-info-extra').innerText = ext;
+        if(ext) outInfo.innerHTML += "<li>Autre : " + ext + "</li>";
+
+        // Langues
+        const outLangs = document.getElementById('out-langs'); outLangs.innerHTML = "";
+        Array.from(document.getElementById('lang-inputs').children).forEach(b => {
+            const sels = b.querySelectorAll('select');
+            if(sels[0].value) outLangs.innerHTML += "<li>" + sels[0].value + " (" + sels[1].value + ")</li>";
+        });
 
         renderBlocks('edu-inputs', 'out-edu-list', false);
         renderBlocks('exp-inputs', 'out-exp-list', true);
@@ -327,7 +361,7 @@
     }
 
     function checkLim(el, limit) {
-        if(document.querySelectorAll(`input[name="${el.name}"]:checked`).length > limit) { el.checked = false; alert("Limite atteinte."); }
+        if(document.querySelectorAll(`input[name="${el.name}"]:checked`).length > limit) { el.checked = false; alert("Max " + limit + " choix."); }
         render();
     }
 
@@ -344,6 +378,17 @@
         const div = document.createElement('div'); div.className = 'dynamic-block';
         div.innerHTML = `<input type="text" placeholder="Diplôme" oninput="render()"><input type="text" placeholder="Lieu" oninput="render()" style="margin:5px 0"><input type="text" placeholder="Année" oninput="render()">`;
         document.getElementById('edu-inputs').appendChild(div);
+    }
+
+    function addLang() {
+        const div = document.createElement('div'); div.className = 'dynamic-block';
+        let html = `<select onchange="render()"><option value="">-- Choisir Langue --</option>`;
+        db.langs.forEach(l => html += `<option value="${l}">${l}</option>`);
+        html += `</select><select onchange="render()" style="margin-top:5px">`;
+        for(let k in db.levels) html += `<option value="${k}">${db.levels[k]}</option>`;
+        html += `</select>`;
+        div.innerHTML = html;
+        document.getElementById('lang-inputs').appendChild(div);
     }
 
     function renderBlocks(inId, outId, isExp) {
