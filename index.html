@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Générateur de CV HECG - Final v3</title>
+    <title>Générateur de CV HECG - Final Pro</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -25,7 +25,7 @@
             color: white; text-align: center;
         }
         .login-box { background: white; padding: 30px; border-radius: 8px; width: 320px; display: flex; flex-direction: column; gap: 15px; }
-        .login-box input { padding: 12px; border: 1px solid #ccc; border-radius: 4px; text-align: center; font-size: 1.1rem; width: 100%; box-sizing: border-box; }
+        .login-box input { padding: 12px; border: 1px solid #ccc; border-radius: 4px; text-align: center; font-size: 1.1rem; width: 100%; box-sizing: border-box; color: #333; }
         .login-box button { background: var(--hecg-orange); color: white; border: none; padding: 12px; border-radius: 4px; cursor: pointer; font-weight: bold; }
 
         /* --- APPLICATION --- */
@@ -58,7 +58,7 @@
             print-color-adjust: exact;
         }
 
-        .logo-hecg { position: absolute; top: 65px; right: 50px; width: 120px; z-index: 10; }
+        .logo-hecg { position: absolute; top: 75px; right: 50px; width: 120px; z-index: 10; }
         .cv-header { display: flex; padding: 40px 50px 25px; align-items: center; }
         .photo-wrap { width: 135px; height: 135px; padding: 4px; background: var(--gradient); display: flex; justify-content: center; align-items: center; }
         .photo-wrap img { width: 100%; height: 100%; object-fit: cover; background: #fff; }
@@ -86,7 +86,7 @@
         .col-left .section-box::after { content: ""; position: absolute; top: 0; right: -36px; width: 36px; height: var(--line-width); background: var(--hecg-orange); }
         .col-right .section-box::before { content: ""; position: absolute; top: 0; left: -26px; width: 26px; height: var(--line-width); background: var(--hecg-orange); }
 
-        .cv-block { margin-bottom: 18px; }
+        .cv-block { margin-bottom: 15px; }
         .cv-title { font-weight: bold; font-size: 14px; color: var(--hecg-navy); display: flex; justify-content: space-between; }
         .cv-sub { font-size: 12.5px; color: #555; font-style: italic; margin-bottom: 3px; }
         ul { padding-left: 18px; margin: 4px 0; list-style: none; }
@@ -261,7 +261,6 @@
         soft: ["Rigueur", "Autonomie", "Esprit d'équipe", "Organisation", "Patience", "Réactivité", "Discrétion", "Capacité d'adaptation"],
         hard: ["Saisie comptable", "Fiscalité", "Paie", "Analyse financière", "Audit", "TVA", "Bilan", "Rapprochement bancaire"],
         hobbies: ["Voyage", "Sport", "Cuisine", "Cinéma", "Musique", "Lecture", "Photographie"],
-        langs: ["Anglais", "Italien", "Espagnol", "Allemand", "Arabe", "Chinois", "Russe", "Autre"],
         levels: {
             "A1": "A1 - Débutant", "A2": "A2 - Élémentaire", "B1": "B1 - Intermédiaire",
             "B2": "B2 - Intermédiaire avancé", "C1": "C1 - Autonome", "C2": "C2 - Maîtrise"
@@ -302,7 +301,6 @@
     function render() {
         const nomRaw = document.getElementById('nom').value.toUpperCase();
         let prenomRaw = document.getElementById('prenom').value;
-        // Formatage Prénom : Première lettre Maj, reste Min
         prenomRaw = prenomRaw.charAt(0).toUpperCase() + prenomRaw.slice(1).toLowerCase();
         
         const full = (nomRaw + " " + prenomRaw).trim() || "NOM Prénom";
@@ -345,8 +343,9 @@
         // Langues
         const outLangs = document.getElementById('out-langs'); outLangs.innerHTML = "";
         Array.from(document.getElementById('lang-inputs').children).forEach(b => {
-            const sels = b.querySelectorAll('select');
-            if(sels[0].value) outLangs.innerHTML += "<li>" + sels[0].value + " (" + sels[1].value + ")</li>";
+            const nameIn = b.querySelector('input').value;
+            const lvlSel = b.querySelector('select').value;
+            if(nameIn) outLangs.innerHTML += "<li>" + nameIn + " (" + lvlSel + ")</li>";
         });
 
         renderBlocks('edu-inputs', 'out-edu-list', false);
@@ -368,7 +367,7 @@
     function addExp() {
         if(expCt >= 4) return; expCt++;
         const div = document.createElement('div'); div.className = 'dynamic-block';
-        div.innerHTML = `<input type="text" placeholder="Poste" oninput="render()"><input type="text" placeholder="Entreprise" oninput="render()" style="margin:5px 0"><input type="text" placeholder="Année" oninput="render()">
+        div.innerHTML = `<input type="text" placeholder="Poste occupé" oninput="render()"><input type="text" placeholder="Entreprise" oninput="render()" style="margin:5px 0"><input type="text" placeholder="Année" oninput="render()">
             <div class="mission-row"><input type="text" placeholder="Mission 1" oninput="render()"></div><div class="mission-row"><input type="text" placeholder="Mission 2" oninput="render()"></div><div class="mission-row"><input type="text" placeholder="Mission 3" oninput="render()"></div>`;
         document.getElementById('exp-inputs').appendChild(div);
     }
@@ -376,15 +375,13 @@
     function addEdu() {
         if(eduCt >= 2) return; eduCt++;
         const div = document.createElement('div'); div.className = 'dynamic-block';
-        div.innerHTML = `<input type="text" placeholder="Diplôme" oninput="render()"><input type="text" placeholder="Lieu" oninput="render()" style="margin:5px 0"><input type="text" placeholder="Année" oninput="render()">`;
+        div.innerHTML = `<input type="text" placeholder="Nom du diplôme" oninput="render()"><input type="text" placeholder="Lieu d'obtention" oninput="render()" style="margin:5px 0"><input type="text" placeholder="Année d'obtention" oninput="render()">`;
         document.getElementById('edu-inputs').appendChild(div);
     }
 
     function addLang() {
         const div = document.createElement('div'); div.className = 'dynamic-block';
-        let html = `<select onchange="render()"><option value="">-- Choisir Langue --</option>`;
-        db.langs.forEach(l => html += `<option value="${l}">${l}</option>`);
-        html += `</select><select onchange="render()" style="margin-top:5px">`;
+        let html = `<input type="text" placeholder="Nom de la langue (ex: Anglais)" oninput="render()"><select onchange="render()" style="margin-top:5px">`;
         for(let k in db.levels) html += `<option value="${k}">${db.levels[k]}</option>`;
         html += `</select>`;
         div.innerHTML = html;
