@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Générateur de CV HECG - Final Pro</title>
+    <title>Générateur de CV HECG - Final Vertical Pro</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -30,8 +30,8 @@
 
         /* --- APPLICATION --- */
         #app-content { display: none; width: 100%; height: 100%; }
-        #form-side { width: 40%; padding: 25px; overflow-y: auto; background: white; border-right: 4px solid var(--hecg-dark); }
-        #preview-side { width: 60%; display: flex; justify-content: center; padding: 15px; overflow-y: auto; }
+        #form-side { width: 42%; padding: 25px; overflow-y: auto; background: white; border-right: 4px solid var(--hecg-dark); }
+        #preview-side { width: 58%; display: flex; justify-content: center; padding: 15px; overflow-y: auto; }
 
         .form-section { border-bottom: 2px solid #eee; padding-bottom: 15px; margin-bottom: 15px; }
         h3 { color: var(--hecg-dark); border-left: 5px solid var(--hecg-orange); padding-left: 10px; margin-top: 0; font-size: 1rem; }
@@ -66,11 +66,21 @@
         .header-main { flex: 1; margin-left: 30px; overflow: hidden; }
         .p-name { color: var(--hecg-teal); font-weight: bold; margin: 0; line-height: 1.1; white-space: nowrap; }
         .p-age { font-size: 18px; color: var(--hecg-navy); margin-bottom: 8px; }
-        .p-search { color: var(--hecg-navy); font-size: 16px; margin: 5px 0; line-height: 1.2; max-width: 420px; }
         
-        .contact-bar { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 11.5px; color: #444; margin-top: 15px; }
-        .contact-item { display: flex; align-items: center; gap: 8px; }
-        .contact-item i { color: var(--hecg-navy); font-size: 12px; width: 16px; text-align: center; }
+        .p-search { color: var(--hecg-navy); font-size: 14px; margin: 5px 0; line-height: 1.2; max-width: 380px; }
+        
+        /* Liste Contact en Colonne Unique */
+        .contact-column { 
+            display: flex; 
+            flex-direction: column; 
+            gap: 5px; 
+            margin-top: 12px; 
+            font-size: 11px; 
+            color: #444; 
+            max-width: 380px;
+        }
+        .contact-item-row { display: flex; align-items: center; gap: 8px; word-break: break-all; }
+        .contact-item-row i { color: var(--hecg-navy); font-size: 12px; width: 16px; text-align: center; }
 
         .cv-container { display: flex; flex: 1; padding: 0 50px 30px; gap: 35px; position: relative; }
         .col-left { width: 34%; display: flex; flex-direction: column; }
@@ -168,22 +178,22 @@
             <h3>4. Compétences & Centres d'intérêt</h3>
             <label>Soft Skills (Max 4)</label>
             <div class="checkbox-group" id="soft-checks"></div>
-            <input type="text" id="soft_extra" placeholder="Autre Soft Skill (Choix libre)" oninput="render()">
+            <input type="text" id="soft_extra" placeholder="Autre Soft Skill" oninput="render()">
             
             <label style="margin-top:10px">Compétences Métier (Max 4)</label>
             <div class="checkbox-group" id="hard-checks"></div>
-            <input type="text" id="hard_extra" placeholder="Autre Compétence (Choix libre)" oninput="render()">
+            <input type="text" id="hard_extra" placeholder="Autre Compétence" oninput="render()">
             
             <label style="margin-top:10px">Informatique</label>
             <div class="checkbox-group">
-                <div><input type="checkbox" id="check-office" checked onchange="render()"> Pack Office (Word, Excel, PPT)</div>
+                <div><input type="checkbox" id="check-office" checked onchange="render()"> Pack Office</div>
             </div>
             <input type="text" id="logiciels" placeholder="Logiciels Comptables" oninput="render()" style="margin-bottom:5px">
             <input type="text" id="info_extra" placeholder="Autre informatique" oninput="render()">
             
             <label style="margin-top:10px">Centres d'intérêt (Max 3)</label>
             <div class="checkbox-group" id="hobby-checks"></div>
-            <input type="text" id="hobby_extra" placeholder="Autre centre d'intérêt (Choix libre)" oninput="render()">
+            <input type="text" id="hobby_extra" placeholder="Autre centre d'intérêt" oninput="render()">
         </div>
 
         <div class="form-section">
@@ -204,12 +214,13 @@
                     <h1 class="p-name" id="out-full-name">NOM Prénom</h1>
                     <div class="p-age"><span id="out-age">--</span> ans</div>
                     <div class="p-search">Recherche une alternance en <b id="out-dip-label">--</b><br>Rythme 2j à l'école / 3j en entreprise</div>
-                    <div class="contact-bar">
-                        <div class="contact-item"><i class="fa fa-phone"></i> <span id="out-tel">06 00 00 00 00</span></div>
-                        <div class="contact-item"><i class="fab fa-linkedin"></i> <span id="out-linkedin">LinkedIn</span></div>
-                        <div class="contact-item"><i class="fa fa-envelope"></i> <span id="out-email">email@etudiant.fr</span></div>
-                        <div class="contact-item"><i class="fa fa-car"></i> <span id="out-car">Véhiculé(e) : Oui</span></div>
-                        <div class="contact-item"><i class="fa fa-map-marker-alt"></i> <span id="out-ville">Marseille</span></div>
+                    
+                    <div class="contact-column">
+                        <div class="contact-item-row"><i class="fa fa-phone"></i> <span id="out-tel">06 00 00 00 00</span></div>
+                        <div class="contact-item-row"><i class="fa fa-car"></i> <span id="out-car">Véhiculé(e) : Oui</span></div>
+                        <div class="contact-item-row"><i class="fa fa-envelope"></i> <span id="out-email">email@etudiant.fr</span></div>
+                        <div class="contact-item-row"><i class="fab fa-linkedin"></i> <span id="out-linkedin">LinkedIn</span></div>
+                        <div class="contact-item-row"><i class="fa fa-map-marker-alt"></i> <span id="out-ville">Marseille</span></div>
                     </div>
                 </div>
             </div>
@@ -217,19 +228,14 @@
                 <div class="col-left">
                     <div class="section-box">Soft Skills</div>
                     <ul id="out-soft"></ul>
-                    
                     <div class="section-box">Compétences</div>
                     <ul id="out-hard"></ul>
-                    
                     <div class="section-box">Informatique</div>
                     <ul id="out-info"></ul>
-
                     <div class="section-box">Langues</div>
                     <ul id="out-langs"></ul>
-
                     <div class="section-box">Centres d'intérêt</div>
                     <ul id="out-hobbies"></ul>
-
                     <div class="footer-cv">
                         <div class="section-box">Contact École</div>
                         <div style="font-size:11.5px; color: var(--hecg-navy); line-height: 1.5; padding-left: 5px;">
@@ -245,7 +251,6 @@
                         <div style="font-size:11px; color:#888">Formation en cours</div>
                     </div>
                     <div id="out-edu-list"></div>
-                    
                     <div class="section-box">Expériences Professionnelles</div>
                     <div id="out-exp-list"></div>
                 </div>
@@ -272,7 +277,7 @@
         }
     };
 
-    let expCt = 0, eduCt = 0, langCt = 0;
+    let expCt = 0, eduCt = 0;
 
     function init() {
         genChecks('soft-checks', db.soft, 'soft', 4);
@@ -307,7 +312,6 @@
         const outName = document.getElementById('out-full-name');
         outName.innerText = full;
         
-        // Taille adaptative
         let size = 34;
         if(full.length > 25) size = 20;
         else if(full.length > 18) size = 26;
@@ -327,20 +331,17 @@
         document.getElementById('out-linkedin').innerText = document.getElementById('linkedin').value || "LinkedIn";
         document.getElementById('out-car').innerText = "Véhiculé(e) : " + document.getElementById('vehicule').value;
 
-        // Listes
         sync('soft', 'out-soft', 'soft_extra');
         sync('hard', 'out-hard', 'hard_extra');
         sync('hobby', 'out-hobbies', 'hobby_extra');
 
-        // Informatique
         const outInfo = document.getElementById('out-info'); outInfo.innerHTML = "";
-        if(document.getElementById('check-office').checked) outInfo.innerHTML += "<li>Pack Office (Word, Excel, PPT)</li>";
+        if(document.getElementById('check-office').checked) outInfo.innerHTML += "<li>Pack Office</li>";
         const log = document.getElementById('logiciels').value;
         if(log) outInfo.innerHTML += "<li>Logiciels : " + log + "</li>";
         const ext = document.getElementById('info_extra').value;
         if(ext) outInfo.innerHTML += "<li>Autre : " + ext + "</li>";
 
-        // Langues
         const outLangs = document.getElementById('out-langs'); outLangs.innerHTML = "";
         Array.from(document.getElementById('lang-inputs').children).forEach(b => {
             const nameIn = b.querySelector('input').value;
@@ -367,7 +368,7 @@
     function addExp() {
         if(expCt >= 4) return; expCt++;
         const div = document.createElement('div'); div.className = 'dynamic-block';
-        div.innerHTML = `<input type="text" placeholder="Poste occupé" oninput="render()"><input type="text" placeholder="Entreprise" oninput="render()" style="margin:5px 0"><input type="text" placeholder="Année" oninput="render()">
+        div.innerHTML = `<input type="text" placeholder="Poste" oninput="render()"><input type="text" placeholder="Entreprise" oninput="render()" style="margin:5px 0"><input type="text" placeholder="Année" oninput="render()">
             <div class="mission-row"><input type="text" placeholder="Mission 1" oninput="render()"></div><div class="mission-row"><input type="text" placeholder="Mission 2" oninput="render()"></div><div class="mission-row"><input type="text" placeholder="Mission 3" oninput="render()"></div>`;
         document.getElementById('exp-inputs').appendChild(div);
     }
@@ -375,13 +376,13 @@
     function addEdu() {
         if(eduCt >= 2) return; eduCt++;
         const div = document.createElement('div'); div.className = 'dynamic-block';
-        div.innerHTML = `<input type="text" placeholder="Nom du diplôme" oninput="render()"><input type="text" placeholder="Lieu d'obtention" oninput="render()" style="margin:5px 0"><input type="text" placeholder="Année d'obtention" oninput="render()">`;
+        div.innerHTML = `<input type="text" placeholder="Diplôme" oninput="render()"><input type="text" placeholder="Lieu" oninput="render()" style="margin:5px 0"><input type="text" placeholder="Année" oninput="render()">`;
         document.getElementById('edu-inputs').appendChild(div);
     }
 
     function addLang() {
         const div = document.createElement('div'); div.className = 'dynamic-block';
-        let html = `<input type="text" placeholder="Nom de la langue (ex: Anglais)" oninput="render()"><select onchange="render()" style="margin-top:5px">`;
+        let html = `<input type="text" placeholder="Langue" oninput="render()"><select onchange="render()" style="margin-top:5px">`;
         for(let k in db.levels) html += `<option value="${k}">${db.levels[k]}</option>`;
         html += `</select>`;
         div.innerHTML = html;
