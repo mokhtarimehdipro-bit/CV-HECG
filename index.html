@@ -137,6 +137,11 @@
             <h3>1. Profil & Photo</h3>
             <input type="text" id="nom" placeholder="NOM" oninput="render()">
             <input type="text" id="prenom" placeholder="Prénom" oninput="render()">
+            <label>Genre</label>
+<select id="genre" onchange="render()">
+    <option value="Garçon">Garçon</option>
+    <option value="Fille">Fille</option>
+</select>
             <label>Date de Naissance</label>
             <input type="date" id="dob" oninput="render()">
             <label>LinkedIn (Obligatoire)</label>
@@ -156,6 +161,7 @@
                 <option value="DCG 2">DCG 2</option>
                 <option value="DCG 3">DCG 3</option>
                 <option value="DSCG">DSCG</option>
+                <option value="Bachelor CDSP">Bachelor CDSP</option>
             </select>
             <input type="text" id="tel" placeholder="Téléphone" oninput="render()">
             <input type="email" id="email" placeholder="Email" oninput="render()">
@@ -247,7 +253,7 @@
                     <div class="section-box">Formations</div>
                     <div class="cv-block">
                         <div class="cv-title">HECG <span id="out-dip-year">2026-2028</span></div>
-                        <div class="cv-sub">Étudiant en <span class="dyn-dip-name">--</span></div>
+                        <div class="cv-sub"><span id="out-genre-etudiant">Étudiant</span> en <span class="dyn-dip-name">--</span></div>
                         <div style="font-size:11px; color:#888">Formation en cours</div>
                     </div>
                     <div id="out-edu-list"></div>
@@ -273,7 +279,7 @@
         years: {
             "BTS GPME 1": "2026-2028", "BTS CG 1": "2026-2028",
             "BTS GPME 2": "2026-2027", "BTS CG 2": "2026-2027",
-            "DCG 1": "2026-2029", "DCG 2": "2026-2028", "DCG 3": "2026-2027", "DSCG": "2026-2028"
+            "DCG 1": "2026-2029", "DCG 2": "2026-2028", "DCG 3": "2026-2027", "DSCG": "2026-2028", "Bachelor CDSP": "2026-2027"
         }
     };
 
@@ -319,6 +325,12 @@
 
         const dob = document.getElementById('dob').value;
         if(dob) document.getElementById('out-age').innerText = Math.floor((new Date() - new Date(dob)) / 31557600000);
+        const genre = document.getElementById('genre').value;
+if(genre === "Fille") {
+    document.getElementById('out-genre-etudiant').innerText = "Étudiante";
+} else {
+    document.getElementById('out-genre-etudiant').innerText = "Étudiant";
+}
 
         const dip = document.getElementById('diplome_select').value;
         document.getElementById('out-dip-label').innerText = dip;
