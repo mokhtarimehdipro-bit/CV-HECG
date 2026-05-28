@@ -13,6 +13,13 @@
             --hecg-orange: #ed7d31;
             --gradient: linear-gradient(180deg, #70a5aa 0%, #22475d 100%);
             --line-width: 1px;
+            /* Variables d'espacement ajustables automatiquement */
+            --adj-block-mb: 15px;
+            --adj-li-mb: 3px;
+            --adj-ul-m: 4px;
+            --adj-section-mb: 12px;
+            --adj-section-mt: 25px;
+            --adj-contact-gap: 5px;
         }
 
         body { font-family: 'Segoe UI', sans-serif; margin: 0; display: flex; height: 100vh; background: #e9ecef; }
@@ -37,7 +44,7 @@
         h3 { color: var(--hecg-dark); border-left: 5px solid var(--hecg-orange); padding-left: 10px; margin-top: 0; font-size: 1rem; }
         label { display: block; font-weight: bold; margin: 8px 0 3px; font-size: 0.8rem; }
         input, select { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; font-size: 0.85rem; }
-        
+
         .checkbox-group { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; font-size: 0.75rem; background: #f8f9fa; padding: 8px; border-radius: 5px; margin-bottom: 5px; }
         .checkbox-group div { display: flex; align-items: center; }
         .checkbox-group input { width: auto; margin-right: 6px; }
@@ -47,11 +54,50 @@
         .btn-action { background: var(--hecg-teal); color: white; padding: 6px 10px; border: none; border-radius: 4px; cursor: pointer; margin-top: 5px; font-weight: bold; font-size: 0.75rem; width: 100%; }
         .btn-generate { background: var(--hecg-orange); color: white; padding: 15px; border: none; width: 100%; cursor: pointer; font-weight: bold; font-size: 1rem; margin-top: 20px; border-radius: 6px; }
 
+        /* --- BOUTONS HISTORIQUE --- */
+        .action-bar { display: flex; gap: 8px; margin-bottom: 15px; }
+        .btn-hist-action { flex: 1; padding: 9px 10px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 0.8rem; transition: opacity 0.2s; }
+        .btn-hist-action:hover { opacity: 0.85; }
+        #btn-draft { background: var(--hecg-teal); color: white; }
+        #btn-hist { background: var(--hecg-navy); color: white; }
+
+        /* --- MODAL HISTORIQUE --- */
+        #history-modal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6); z-index: 10000;
+            align-items: center; justify-content: center;
+        }
+        .history-panel {
+            background: white; width: 580px; max-height: 78vh;
+            border-radius: 10px; overflow: hidden;
+            display: flex; flex-direction: column;
+            box-shadow: 0 12px 45px rgba(0,0,0,0.35);
+        }
+        .history-header {
+            background: var(--hecg-dark); color: white;
+            padding: 16px 20px; display: flex;
+            justify-content: space-between; align-items: center;
+        }
+        .history-header span { font-weight: bold; font-size: 1.05rem; }
+        .history-close { background: none; border: none; color: white; font-size: 1.7rem; cursor: pointer; line-height: 1; padding: 0 4px; }
+        .history-tabs { display: flex; border-bottom: 2px solid #eee; }
+        .history-tab { flex: 1; padding: 12px; border: none; cursor: pointer; font-weight: bold; font-size: 0.85rem; background: #f8f9fa; color: #666; transition: all 0.2s; }
+        .history-tab.active { background: var(--hecg-dark); color: white; }
+        #history-list { overflow-y: auto; flex: 1; min-height: 180px; }
+        .history-item { display: flex; align-items: center; justify-content: space-between; padding: 13px 18px; border-bottom: 1px solid #f0f0f0; }
+        .history-item:hover { background: #fafafa; }
+        .history-name { font-weight: bold; color: var(--hecg-dark); font-size: 0.9rem; }
+        .history-meta { font-size: 0.75rem; color: #999; margin-top: 3px; }
+        .history-actions { display: flex; gap: 7px; flex-shrink: 0; }
+        .btn-load { background: var(--hecg-teal); color: white; border: none; padding: 6px 13px; border-radius: 4px; cursor: pointer; font-size: 0.8rem; font-weight: bold; }
+        .btn-del { background: #dc3545; color: white; border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 0.8rem; }
+        .history-empty { color: #bbb; text-align: center; padding: 35px 20px; font-style: italic; }
+
         /* --- STYLE DU CV --- */
-        #cv-page { 
+        #cv-page {
             width: 210mm; height: 297mm; min-height: 297mm;
             background: white; position: relative;
-            display: flex; flex-direction: column; 
+            display: flex; flex-direction: column;
             box-shadow: 0 0 25px rgba(0,0,0,0.25);
             box-sizing: border-box;
             -webkit-print-color-adjust: exact;
@@ -62,21 +108,20 @@
         .cv-header { display: flex; padding: 40px 50px 25px; align-items: center; }
         .photo-wrap { width: 135px; height: 135px; padding: 4px; background: var(--gradient); display: flex; justify-content: center; align-items: center; }
         .photo-wrap img { width: 100%; height: 100%; object-fit: cover; background: #fff; }
-        
+
         .header-main { flex: 1; margin-left: 30px; overflow: hidden; }
         .p-name { color: var(--hecg-teal); font-weight: bold; margin: 0; line-height: 1.1; white-space: nowrap; }
         .p-age { font-size: 18px; color: var(--hecg-navy); margin-bottom: 8px; }
-        
+
         .p-search { color: var(--hecg-navy); font-size: 14px; margin: 5px 0; line-height: 1.2; max-width: 380px; }
-        
-        /* Liste Contact en Colonne Unique */
-        .contact-column { 
-            display: flex; 
-            flex-direction: column; 
-            gap: 5px; 
-            margin-top: 12px; 
-            font-size: 11px; 
-            color: #444; 
+
+        .contact-column {
+            display: flex;
+            flex-direction: column;
+            gap: var(--adj-contact-gap);
+            margin-top: 12px;
+            font-size: 11px;
+            color: #444;
             max-width: 380px;
         }
         .contact-item-row { display: flex; align-items: center; gap: 8px; word-break: break-all; }
@@ -86,21 +131,21 @@
         .col-left { width: 34%; display: flex; flex-direction: column; }
         .col-right { width: 66%; border-left: var(--line-width) solid var(--hecg-orange); padding-left: 25px; margin-top: 25px; }
 
-        .section-box { 
-            background: var(--gradient) !important; color: white !important; padding: 8px 12px; 
-            text-transform: uppercase; font-weight: bold; font-size: 13px; margin: 0 0 12px;
+        .section-box {
+            background: var(--gradient) !important; color: white !important; padding: 8px 12px;
+            text-transform: uppercase; font-weight: bold; font-size: 13px; margin: 0 0 var(--adj-section-mb);
             position: relative;
         }
 
-        .col-left .section-box { margin-top: 25px; }
+        .col-left .section-box { margin-top: var(--adj-section-mt); }
         .col-left .section-box::after { content: ""; position: absolute; top: 0; right: -36px; width: 36px; height: var(--line-width); background: var(--hecg-orange); }
         .col-right .section-box::before { content: ""; position: absolute; top: 0; left: -26px; width: 26px; height: var(--line-width); background: var(--hecg-orange); }
 
-        .cv-block { margin-bottom: 15px; }
+        .cv-block { margin-bottom: var(--adj-block-mb); }
         .cv-title { font-weight: bold; font-size: 14px; color: var(--hecg-navy); display: flex; justify-content: space-between; }
         .cv-sub { font-size: 12.5px; color: #555; font-style: italic; margin-bottom: 3px; }
-        ul { padding-left: 18px; margin: 4px 0; list-style: none; }
-        li { font-size: 12px; color: var(--hecg-navy); margin-bottom: 3px; position: relative; line-height: 1.3; }
+        ul { padding-left: 18px; margin: var(--adj-ul-m) 0; list-style: none; }
+        li { font-size: 12px; color: var(--hecg-navy); margin-bottom: var(--adj-li-mb); position: relative; line-height: 1.3; }
         li::before { content: "•"; color: var(--hecg-orange); font-weight: bold; position: absolute; left: -14px; }
 
         .footer-cv { margin-top: auto; padding-top: 10px; }
@@ -109,7 +154,7 @@
         @media print {
             @page { size: A4; margin: 0; }
             body { background: white; height: auto; }
-            #form-side, #login-screen { display: none !important; }
+            #form-side, #login-screen, #history-modal { display: none !important; }
             #preview-side { width: 100%; padding: 0; margin: 0; overflow: visible; }
             #cv-page { box-shadow: none; margin: 0; border: none; width: 210mm; height: 297mm; }
             * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
@@ -131,8 +176,13 @@
 
 <div id="app-content">
     <div id="form-side">
-        <h2 style="text-align: center; color: var(--hecg-dark); font-size: 1.3rem;">Configurateur de CV</h2>
-        
+        <h2 style="text-align: center; color: var(--hecg-dark); font-size: 1.3rem; margin-bottom: 10px;">Configurateur de CV</h2>
+
+        <div class="action-bar">
+            <button class="btn-hist-action" id="btn-draft" onclick="saveDraft()">💾 Enregistrer brouillon</button>
+            <button class="btn-hist-action" id="btn-hist" onclick="showHistory()">📋 Mes CV</button>
+        </div>
+
         <div class="form-section">
             <h3>1. Profil & Photo</h3>
             <input type="text" id="nom" placeholder="NOM" oninput="render()">
@@ -185,18 +235,18 @@
             <label>Soft Skills (Max 4)</label>
             <div class="checkbox-group" id="soft-checks"></div>
             <input type="text" id="soft_extra" placeholder="Autre Soft Skill" oninput="render()">
-            
+
             <label style="margin-top:10px">Compétences Métier (Max 4)</label>
             <div class="checkbox-group" id="hard-checks"></div>
             <input type="text" id="hard_extra" placeholder="Autre Compétence" oninput="render()">
-            
+
             <label style="margin-top:10px">Informatique</label>
             <div class="checkbox-group">
                 <div><input type="checkbox" id="check-office" checked onchange="render()"> Pack Office</div>
             </div>
             <input type="text" id="logiciels" placeholder="Logiciels Comptables" oninput="render()" style="margin-bottom:5px">
             <input type="text" id="info_extra" placeholder="Autre informatique" oninput="render()">
-            
+
             <label style="margin-top:10px">Centres d'intérêt (Max 3)</label>
             <div class="checkbox-group" id="hobby-checks"></div>
             <input type="text" id="hobby_extra" placeholder="Autre centre d'intérêt" oninput="render()">
@@ -220,7 +270,7 @@
                     <h1 class="p-name" id="out-full-name">NOM Prénom</h1>
                     <div class="p-age"><span id="out-age">--</span> ans</div>
                     <div class="p-search">Recherche une alternance en <b id="out-dip-label">--</b><br>Rythme 2j à l'école / 3j en entreprise</div>
-                    
+
                     <div class="contact-column">
                         <div class="contact-item-row"><i class="fa fa-phone"></i> <span id="out-tel">06 00 00 00 00</span></div>
                         <div class="contact-item-row"><i class="fa fa-car"></i> <span id="out-car">Véhiculé(e) : Oui</span></div>
@@ -266,6 +316,21 @@
     </div>
 </div>
 
+<!-- MODAL HISTORIQUE -->
+<div id="history-modal">
+    <div class="history-panel">
+        <div class="history-header">
+            <span>📁 Mes CV enregistrés</span>
+            <button class="history-close" onclick="closeHistory()">×</button>
+        </div>
+        <div class="history-tabs">
+            <button id="tab-drafts" class="history-tab active" onclick="showTab('drafts')">📝 Brouillons</button>
+            <button id="tab-final" class="history-tab" onclick="showTab('final')">✅ CV Finalisés</button>
+        </div>
+        <div id="history-list"></div>
+    </div>
+</div>
+
 <script>
     const apiUrl = "https://script.google.com/macros/s/AKfycbyhCy3RFGQ9FuD7m8-B_b8r4E8YJ3W1hBjiUhTRADDksVQr5Qolh86JB4jzOOQEYPHc4w/exec";
     const db = {
@@ -284,6 +349,8 @@
     };
 
     let expCt = 0, eduCt = 0;
+    let currentUserCode = '';
+    let fitTimer = null;
 
     function init() {
         genChecks('soft-checks', db.soft, 'soft', 4);
@@ -302,6 +369,7 @@
             const res = await fetch(apiUrl + "?code=" + encodeURIComponent(code));
             const data = await res.json();
             if (data.valid) {
+                currentUserCode = code;
                 document.getElementById('login-screen').style.display = 'none';
                 document.getElementById('app-content').style.display = 'flex';
                 render();
@@ -313,11 +381,11 @@
         const nomRaw = document.getElementById('nom').value.toUpperCase();
         let prenomRaw = document.getElementById('prenom').value;
         prenomRaw = prenomRaw.charAt(0).toUpperCase() + prenomRaw.slice(1).toLowerCase();
-        
+
         const full = (nomRaw + " " + prenomRaw).trim() || "NOM Prénom";
         const outName = document.getElementById('out-full-name');
         outName.innerText = full;
-        
+
         let size = 34;
         if(full.length > 25) size = 20;
         else if(full.length > 18) size = 26;
@@ -363,6 +431,9 @@ if(genre === "Fille") {
 
         renderBlocks('edu-inputs', 'out-edu-list', false);
         renderBlocks('exp-inputs', 'out-exp-list', true);
+
+        if(fitTimer) clearTimeout(fitTimer);
+        fitTimer = setTimeout(fitToPage, 80);
     }
 
     function genChecks(id, list, name, limit) {
@@ -418,14 +489,296 @@ if(genre === "Fille") {
 
     function uploadImage(i) {
         if (i.files && i.files[0]) {
-            const r = new FileReader(); r.onload = e => document.getElementById('cv-img').src = e.target.result;
+            const r = new FileReader(); r.onload = e => {
+                document.getElementById('cv-img').src = e.target.result;
+                fitToPage();
+            };
             r.readAsDataURL(i.files[0]);
         }
     }
 
     function finalValidation() {
         if(!document.getElementById('linkedin').value) return alert("LinkedIn obligatoire.");
+        if(currentUserCode) {
+            const data = collectData();
+            const id = Date.now().toString();
+            const savedAt = new Date().toLocaleDateString('fr-FR');
+            const nom = ((data.nom || '') + ' ' + (data.prenom || '')).trim() || 'Sans nom';
+            const list = getSavedList('final');
+            list.unshift({ id, savedAt, nom, diplome: data.diplome, data });
+            setSavedList('final', list);
+        }
         window.print();
+    }
+
+    // =============================================
+    // HISTORIQUE & STOCKAGE
+    // =============================================
+
+    function getStorageKey(type) {
+        return 'hecg_' + type + '_' + currentUserCode;
+    }
+
+    function getSavedList(type) {
+        try { return JSON.parse(localStorage.getItem(getStorageKey(type)) || '[]'); }
+        catch(e) { return []; }
+    }
+
+    function setSavedList(type, list) {
+        try {
+            localStorage.setItem(getStorageKey(type), JSON.stringify(list));
+        } catch(e) {
+            try {
+                const nophoto = list.map(item => ({...item, data: {...item.data, photo: ''}}));
+                localStorage.setItem(getStorageKey(type), JSON.stringify(nophoto));
+            } catch(e2) {
+                alert('Espace de stockage insuffisant. Supprimez des anciennes entrées dans "Mes CV".');
+            }
+        }
+    }
+
+    function collectData() {
+        const softChecks = [...document.querySelectorAll('input[name="soft"]:checked')].map(c => c.value);
+        const hardChecks = [...document.querySelectorAll('input[name="hard"]:checked')].map(c => c.value);
+        const hobbyChecks = [...document.querySelectorAll('input[name="hobby"]:checked')].map(c => c.value);
+
+        const eduBlocks = [];
+        Array.from(document.getElementById('edu-inputs').children).forEach(b => {
+            const ins = b.querySelectorAll('input');
+            eduBlocks.push({ diplome: ins[0].value, lieu: ins[1].value, annee: ins[2].value });
+        });
+
+        const expBlocks = [];
+        Array.from(document.getElementById('exp-inputs').children).forEach(b => {
+            const ins = b.querySelectorAll('input');
+            expBlocks.push({ poste: ins[0].value, entreprise: ins[1].value, annee: ins[2].value, m1: ins[3]?.value||'', m2: ins[4]?.value||'', m3: ins[5]?.value||'' });
+        });
+
+        const langBlocks = [];
+        Array.from(document.getElementById('lang-inputs').children).forEach(b => {
+            langBlocks.push({ langue: b.querySelector('input').value, niveau: b.querySelector('select').value });
+        });
+
+        const imgSrc = document.getElementById('cv-img').src;
+        return {
+            nom: document.getElementById('nom').value,
+            prenom: document.getElementById('prenom').value,
+            genre: document.getElementById('genre').value,
+            dob: document.getElementById('dob').value,
+            linkedin: document.getElementById('linkedin').value,
+            tel: document.getElementById('tel').value,
+            email: document.getElementById('email').value,
+            ville: document.getElementById('ville').value,
+            vehicule: document.getElementById('vehicule').value,
+            diplome: document.getElementById('diplome_select').value,
+            soft_extra: document.getElementById('soft_extra').value,
+            hard_extra: document.getElementById('hard_extra').value,
+            info_extra: document.getElementById('info_extra').value,
+            logiciels: document.getElementById('logiciels').value,
+            hobby_extra: document.getElementById('hobby_extra').value,
+            check_office: document.getElementById('check-office').checked,
+            soft_checks: softChecks,
+            hard_checks: hardChecks,
+            hobby_checks: hobbyChecks,
+            edu_blocks: eduBlocks,
+            exp_blocks: expBlocks,
+            lang_blocks: langBlocks,
+            photo: imgSrc.startsWith('data:') ? imgSrc : ''
+        };
+    }
+
+    function restoreData(data) {
+        document.getElementById('nom').value = data.nom || '';
+        document.getElementById('prenom').value = data.prenom || '';
+        document.getElementById('genre').value = data.genre || 'Garçon';
+        document.getElementById('dob').value = data.dob || '';
+        document.getElementById('linkedin').value = data.linkedin || '';
+        document.getElementById('tel').value = data.tel || '';
+        document.getElementById('email').value = data.email || '';
+        document.getElementById('ville').value = data.ville || '';
+        document.getElementById('vehicule').value = data.vehicule || 'Oui';
+        document.getElementById('diplome_select').value = data.diplome || 'BTS GPME 1';
+        document.getElementById('soft_extra').value = data.soft_extra || '';
+        document.getElementById('hard_extra').value = data.hard_extra || '';
+        document.getElementById('info_extra').value = data.info_extra || '';
+        document.getElementById('logiciels').value = data.logiciels || '';
+        document.getElementById('hobby_extra').value = data.hobby_extra || '';
+        document.getElementById('check-office').checked = data.check_office !== false;
+
+        document.querySelectorAll('input[name="soft"], input[name="hard"], input[name="hobby"]').forEach(c => c.checked = false);
+        (data.soft_checks || []).forEach(v => { const el = document.querySelector(`input[name="soft"][value="${v}"]`); if(el) el.checked = true; });
+        (data.hard_checks || []).forEach(v => { const el = document.querySelector(`input[name="hard"][value="${v}"]`); if(el) el.checked = true; });
+        (data.hobby_checks || []).forEach(v => { const el = document.querySelector(`input[name="hobby"][value="${v}"]`); if(el) el.checked = true; });
+
+        document.getElementById('edu-inputs').innerHTML = '';
+        eduCt = 0;
+        (data.edu_blocks || []).forEach(b => {
+            addEdu();
+            const block = document.getElementById('edu-inputs').lastElementChild;
+            const ins = block.querySelectorAll('input');
+            ins[0].value = b.diplome || '';
+            ins[1].value = b.lieu || '';
+            ins[2].value = b.annee || '';
+        });
+
+        document.getElementById('exp-inputs').innerHTML = '';
+        expCt = 0;
+        (data.exp_blocks || []).forEach(b => {
+            addExp();
+            const block = document.getElementById('exp-inputs').lastElementChild;
+            const ins = block.querySelectorAll('input');
+            ins[0].value = b.poste || '';
+            ins[1].value = b.entreprise || '';
+            ins[2].value = b.annee || '';
+            if(ins[3]) ins[3].value = b.m1 || '';
+            if(ins[4]) ins[4].value = b.m2 || '';
+            if(ins[5]) ins[5].value = b.m3 || '';
+        });
+
+        document.getElementById('lang-inputs').innerHTML = '';
+        (data.lang_blocks || []).forEach(b => {
+            addLang();
+            const block = document.getElementById('lang-inputs').lastElementChild;
+            block.querySelector('input').value = b.langue || '';
+            block.querySelector('select').value = b.niveau || 'A1';
+        });
+
+        if(data.photo && data.photo.startsWith('data:')) {
+            document.getElementById('cv-img').src = data.photo;
+        } else {
+            document.getElementById('cv-img').src = 'https://via.placeholder.com/150?text=PHOTO';
+        }
+
+        render();
+    }
+
+    function saveDraft() {
+        if(!currentUserCode) return;
+        const data = collectData();
+        const id = Date.now().toString();
+        const savedAt = new Date().toLocaleDateString('fr-FR');
+        const nom = ((data.nom || '') + ' ' + (data.prenom || '')).trim() || 'Sans nom';
+
+        const list = getSavedList('drafts');
+        list.unshift({ id, savedAt, nom, diplome: data.diplome, data });
+        setSavedList('drafts', list);
+
+        const btn = document.getElementById('btn-draft');
+        const orig = btn.innerText;
+        btn.innerText = '✓ Sauvegardé !';
+        btn.style.background = '#28a745';
+        setTimeout(() => { btn.innerText = orig; btn.style.background = ''; }, 2200);
+    }
+
+    function showHistory() {
+        document.getElementById('history-modal').style.display = 'flex';
+        showTab('drafts');
+    }
+
+    function closeHistory() {
+        document.getElementById('history-modal').style.display = 'none';
+    }
+
+    function showTab(tab) {
+        document.getElementById('tab-drafts').className = 'history-tab' + (tab === 'drafts' ? ' active' : '');
+        document.getElementById('tab-final').className = 'history-tab' + (tab === 'final' ? ' active' : '');
+
+        const list = getSavedList(tab);
+        const container = document.getElementById('history-list');
+
+        if(list.length === 0) {
+            container.innerHTML = '<p class="history-empty">Aucun CV enregistré.</p>';
+            return;
+        }
+
+        container.innerHTML = list.map(item => `
+            <div class="history-item">
+                <div>
+                    <div class="history-name">${item.nom}</div>
+                    <div class="history-meta">${item.diplome} &mdash; ${item.savedAt}</div>
+                </div>
+                <div class="history-actions">
+                    <button class="btn-load" onclick="loadCV('${tab}', '${item.id}')">Charger</button>
+                    <button class="btn-del" onclick="deleteCV('${tab}', '${item.id}')">✕</button>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    function loadCV(type, id) {
+        const item = getSavedList(type).find(i => i.id === id);
+        if(item) {
+            restoreData(item.data);
+            closeHistory();
+            document.getElementById('form-side').scrollTop = 0;
+        }
+    }
+
+    function deleteCV(type, id) {
+        if(!confirm('Supprimer ce CV ?')) return;
+        setSavedList(type, getSavedList(type).filter(i => i.id !== id));
+        showTab(type);
+    }
+
+    // =============================================
+    // AJUSTEMENT AUTOMATIQUE À LA PAGE
+    // =============================================
+    function fitToPage() {
+        const page = document.getElementById('cv-page');
+        if(!page) return;
+        const root = document.documentElement;
+
+        let bMb = 15, liMb = 3, ulM = 4, sMb = 12, sMt = 25, cGap = 5;
+
+        function apply() {
+            root.style.setProperty('--adj-block-mb', bMb + 'px');
+            root.style.setProperty('--adj-li-mb', liMb + 'px');
+            root.style.setProperty('--adj-ul-m', ulM + 'px');
+            root.style.setProperty('--adj-section-mb', sMb + 'px');
+            root.style.setProperty('--adj-section-mt', sMt + 'px');
+            root.style.setProperty('--adj-contact-gap', cGap + 'px');
+        }
+
+        function getOv() {
+            const pr = page.getBoundingClientRect();
+            const cl = page.querySelector('.col-left');
+            const cr = page.querySelector('.col-right');
+            if(!cl || !cr) return 0;
+            return Math.max(cl.getBoundingClientRect().bottom, cr.getBoundingClientRect().bottom) - pr.bottom;
+        }
+
+        apply();
+        const ov = getOv();
+
+        if(ov > 3) {
+            for(let i = 0; i < 90; i++) {
+                if(getOv() <= 3) break;
+                if(sMt > 10)       sMt  = Math.max(10,  sMt  - 1);
+                else if(cGap > 2)  cGap = Math.max(2,   cGap - 0.5);
+                else if(ulM > 1)   ulM  = Math.max(1,   ulM  - 0.5);
+                else if(liMb > 1)  liMb = Math.max(1,   liMb - 0.25);
+                else if(sMb > 4)   sMb  = Math.max(4,   sMb  - 0.5);
+                else if(bMb > 3)   bMb  = Math.max(3,   bMb  - 0.5);
+                else break;
+                apply();
+            }
+        } else if(ov < -55) {
+            for(let i = 0; i < 50; i++) {
+                if(getOv() > -15) break;
+                const prev = [bMb, liMb, ulM, sMb, sMt, cGap];
+                if(bMb < 20)      bMb  = Math.min(20,  bMb  + 0.5);
+                else if(liMb < 5) liMb = Math.min(5,   liMb + 0.25);
+                else if(ulM < 8)  ulM  = Math.min(8,   ulM  + 0.5);
+                else if(sMt < 32) sMt  = Math.min(32,  sMt  + 1);
+                else break;
+                apply();
+                if(getOv() > 3) {
+                    [bMb, liMb, ulM, sMb, sMt, cGap] = prev;
+                    apply();
+                    break;
+                }
+            }
+        }
     }
 </script>
 </body>
