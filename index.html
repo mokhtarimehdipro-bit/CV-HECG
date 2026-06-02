@@ -60,6 +60,8 @@
         .btn-hist-action:hover { opacity: 0.85; }
         #btn-draft { background: var(--hecg-teal); color: white; }
         #btn-hist { background: var(--hecg-navy); color: white; }
+        #sync-status { font-size: 0.7rem; min-height: 14px; margin-bottom: 6px; text-align: right; }
+        .sync-ok { color: #28a745; } .sync-err { color: #dc3545; } .sync-info { color: #6c757d; }
 
         /* --- MODAL HISTORIQUE --- */
         #history-modal {
@@ -178,6 +180,7 @@
     <div id="form-side">
         <h2 style="text-align: center; color: var(--hecg-dark); font-size: 1.3rem; margin-bottom: 10px;">Configurateur de CV</h2>
 
+        <div id="sync-status"></div>
         <div class="action-bar">
             <button class="btn-hist-action" id="btn-draft" onclick="saveDraft()">💾 Enregistrer brouillon</button>
             <button class="btn-hist-action" id="btn-hist" onclick="showHistory()">📋 Mes CV</button>
@@ -333,6 +336,8 @@
 
 <script>
     const apiUrl = "https://script.google.com/macros/s/AKfycbyhCy3RFGQ9FuD7m8-B_b8r4E8YJ3W1hBjiUhTRADDksVQr5Qolh86JB4jzOOQEYPHc4w/exec";
+    const DRIVE_FOLDER_BROUILLONS = '1FYntYgAef6TAaN4DA3i4t7wk4dlHHhR7';
+    const DRIVE_FOLDER_FINAL      = '1WWCs6isHpUmOQ3YLlvsn0dQFIIeVwOP_';
     const db = {
         soft: ["Rigueur", "Autonomie", "Esprit d'équipe", "Organisation", "Patience", "Réactivité", "Discrétion", "Capacité d'adaptation"],
         hard: ["Saisie comptable", "Fiscalité", "Paie", "Analyse financière", "Audit", "TVA", "Bilan", "Rapprochement bancaire"],
@@ -373,6 +378,7 @@
                 document.getElementById('login-screen').style.display = 'none';
                 document.getElementById('app-content').style.display = 'flex';
                 render();
+                loadFromDrive(code);
             } else { document.getElementById('login-error').style.display = 'block'; }
         } catch (e) { alert("Erreur serveur."); } finally { btn.innerText = "ENTRER"; btn.disabled = false; }
     }
@@ -507,6 +513,7 @@ if(genre === "Fille") {
             const list = getSavedList('final');
             list.unshift({ id, savedAt, nom, diplome: data.diplome, data });
             setSavedList('final', list);
+            syncToDrive('final', list);
         }
         window.print();
     }
@@ -652,6 +659,65 @@ if(genre === "Fille") {
         render();
     }
 
+    // =============================================
+    // SYNCHRONISATION GOOGLE DRIVE
+    // =============================================
+
+    function setSyncStatus(msg, cls) {
+        const el = document.getElementById('sync-status');
+        if (!el) return;
+        el.textContent = msg;
+        el.className = cls || 'sync-info';
+    }
+
+    async function syncToDrive(type, list) {
+        const light = list.map(item => ({
+            ...item,
+            data: item.data ? { ...item.data, photo: '' } : item.data
+        }));
+        try {
+            setSyncStatus('☁ Synchronisation Drive…', 'sync-info');
+            await fetch(apiUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain' },
+                body: JSON.stringify({ code: currentUserCode, action: 'save', type, list: light }),
+                mode: 'no-cors'
+            });
+            setSyncStatus('☁ Sauvegardé sur Drive (' + new Date().toLocaleTimeString('fr-FR', {hour:'2-digit',minute:'2-digit'}) + ')', 'sync-ok');
+        } catch(e) {
+            setSyncStatus('⚠ Sync Drive échouée (données locales OK)', 'sync-err');
+        }
+    }
+
+    async function loadFromDrive(code) {
+        try {
+            setSyncStatus('☁ Restauration depuis Drive…', 'sync-info');
+            const base = apiUrl + '?code=' + encodeURIComponent(code);
+            const [dRes, fRes] = await Promise.all([
+                fetch(base + '&action=load&type=drafts'),
+                fetch(base + '&action=load&type=final')
+            ]);
+            const dData = await dRes.json();
+            const fData = await fRes.json();
+
+            let nD = 0, nF = 0;
+            if (dData.ok && Array.isArray(dData.list) && dData.list.length > 0) {
+                const local = getSavedList('drafts');
+                if (dData.list.length >= local.length) { setSavedList('drafts', dData.list); nD = dData.list.length; }
+                else nD = local.length;
+            }
+            if (fData.ok && Array.isArray(fData.list) && fData.list.length > 0) {
+                const local = getSavedList('final');
+                if (fData.list.length >= local.length) { setSavedList('final', fData.list); nF = fData.list.length; }
+                else nF = local.length;
+            }
+            const msg = nD + ' brouillon(s) · ' + nF + ' CV finalisé(s) disponible(s)';
+            setSyncStatus('✅ Drive synchronisé — ' + msg, 'sync-ok');
+        } catch(e) {
+            setSyncStatus('⚠ Drive inaccessible — données locales uniquement', 'sync-err');
+        }
+    }
+
     function saveDraft() {
         if(!currentUserCode) return;
         const data = collectData();
@@ -662,6 +728,7 @@ if(genre === "Fille") {
         const list = getSavedList('drafts');
         list.unshift({ id, savedAt, nom, diplome: data.diplome, data });
         setSavedList('drafts', list);
+        syncToDrive('drafts', list);
 
         const btn = document.getElementById('btn-draft');
         const orig = btn.innerText;
