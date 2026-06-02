@@ -3,450 +3,466 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Générateur de CV HECG - Final Vertical Pro</title>
+    <title>Générateur de CV HECG</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --hecg-teal: #70a5aa;
-            --hecg-navy: #3f5071;
-            --hecg-dark: #22475d;
-            --hecg-orange: #ed7d31;
-            --gradient: linear-gradient(180deg, #70a5aa 0%, #22475d 100%);
+            --hecg-teal: #70a5aa; --hecg-navy: #3f5071; --hecg-dark: #22475d;
+            --hecg-orange: #ed7d31; --gradient: linear-gradient(180deg, #70a5aa 0%, #22475d 100%);
             --line-width: 1px;
-            /* Variables d'espacement ajustables automatiquement */
-            --adj-block-mb: 15px;
-            --adj-li-mb: 3px;
-            --adj-ul-m: 4px;
-            --adj-section-mb: 12px;
-            --adj-section-mt: 25px;
-            --adj-contact-gap: 5px;
+            --adj-block-mb: 15px; --adj-li-mb: 3px; --adj-ul-m: 4px;
+            --adj-section-mb: 12px; --adj-section-mt: 25px; --adj-contact-gap: 5px;
         }
-
         body { font-family: 'Segoe UI', sans-serif; margin: 0; display: flex; height: 100vh; background: #e9ecef; }
 
-        /* --- ÉCRAN DE CONNEXION --- */
-        #login-screen {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: var(--hecg-dark); display: flex; flex-direction: column;
-            align-items: center; justify-content: center; z-index: 9999;
-            color: white; text-align: center;
-        }
-        .login-box { background: white; padding: 30px; border-radius: 8px; width: 320px; display: flex; flex-direction: column; gap: 15px; }
-        .login-box input { padding: 12px; border: 1px solid #ccc; border-radius: 4px; text-align: center; font-size: 1.1rem; width: 100%; box-sizing: border-box; color: #333; }
-        .login-box button { background: var(--hecg-orange); color: white; border: none; padding: 12px; border-radius: 4px; cursor: pointer; font-weight: bold; }
+        /* LOGIN */
+        #login-screen { position: fixed; top:0; left:0; width:100%; height:100%; background: var(--hecg-dark); display:flex; flex-direction:column; align-items:center; justify-content:center; z-index:9999; color:white; text-align:center; }
+        .login-box { background:white; padding:30px; border-radius:8px; width:320px; display:flex; flex-direction:column; gap:12px; }
+        .login-box input { padding:10px; border:1px solid #ccc; border-radius:4px; text-align:center; font-size:1rem; width:100%; box-sizing:border-box; color:#333; }
+        .login-box button { background:var(--hecg-orange); color:white; border:none; padding:12px; border-radius:4px; cursor:pointer; font-weight:bold; }
+        .login-field-label { text-align:left; font-size:0.75rem; color:#666; margin-bottom:-6px; }
 
-        /* --- APPLICATION --- */
-        #app-content { display: none; width: 100%; height: 100%; }
-        #form-side { width: 42%; padding: 25px; overflow-y: auto; background: white; border-right: 4px solid var(--hecg-dark); }
-        #preview-side { width: 58%; display: flex; justify-content: center; padding: 15px; overflow-y: auto; }
+        /* APP */
+        #app-content { display:none; width:100%; height:100%; }
+        #form-side { width:42%; padding:20px 25px; overflow-y:auto; background:white; border-right:4px solid var(--hecg-dark); }
+        #preview-side { width:58%; display:flex; justify-content:center; padding:15px; overflow-y:auto; }
 
-        .form-section { border-bottom: 2px solid #eee; padding-bottom: 15px; margin-bottom: 15px; }
-        h3 { color: var(--hecg-dark); border-left: 5px solid var(--hecg-orange); padding-left: 10px; margin-top: 0; font-size: 1rem; }
-        label { display: block; font-weight: bold; margin: 8px 0 3px; font-size: 0.8rem; }
-        input, select { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; font-size: 0.85rem; }
+        .form-section { border-bottom:2px solid #eee; padding-bottom:12px; margin-bottom:12px; }
+        h3 { color:var(--hecg-dark); border-left:5px solid var(--hecg-orange); padding-left:10px; margin-top:0; font-size:0.95rem; }
+        label { display:block; font-weight:bold; margin:6px 0 2px; font-size:0.78rem; color:#444; }
+        input[type="text"], input[type="email"], input[type="date"], input[type="password"], select { width:100%; padding:7px; border:1px solid #ccc; border-radius:4px; box-sizing:border-box; font-size:0.82rem; margin-bottom:3px; }
+        .checkbox-group { display:grid; grid-template-columns:1fr 1fr; gap:4px; font-size:0.73rem; background:#f8f9fa; padding:7px; border-radius:5px; margin-bottom:4px; }
+        .checkbox-group div { display:flex; align-items:center; }
+        .checkbox-group input { width:auto; margin-right:5px; margin-bottom:0; }
+        .dynamic-block { background:#f1f3f5; padding:9px; border-radius:5px; margin-top:7px; border:1px dashed var(--hecg-teal); }
+        .mission-row { margin-top:3px; }
+        .mission-row input { margin-bottom:0; }
+        .btn-action { background:var(--hecg-teal); color:white; padding:5px 9px; border:none; border-radius:4px; cursor:pointer; margin-top:5px; font-weight:bold; font-size:0.72rem; width:100%; }
+        .btn-add-mission { background:#8fb8bd; color:white; padding:4px 8px; border:none; border-radius:3px; cursor:pointer; margin-top:4px; font-size:0.7rem; width:100%; }
+        .btn-add-mission:disabled { background:#ccc; cursor:not-allowed; }
+        .btn-generate { background:var(--hecg-orange); color:white; padding:14px; border:none; width:100%; cursor:pointer; font-weight:bold; font-size:1rem; margin-top:18px; border-radius:6px; }
 
-        .checkbox-group { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; font-size: 0.75rem; background: #f8f9fa; padding: 8px; border-radius: 5px; margin-bottom: 5px; }
-        .checkbox-group div { display: flex; align-items: center; }
-        .checkbox-group input { width: auto; margin-right: 6px; }
+        /* USER INFO BAR */
+        #user-info-bar { display:flex; align-items:center; justify-content:space-between; background:#f0f4f5; border-radius:6px; padding:7px 12px; margin-bottom:10px; font-size:0.78rem; color:var(--hecg-dark); }
+        #user-info-bar strong { font-size:0.85rem; }
+        .badge-personnel { background:var(--hecg-orange); color:white; border-radius:10px; padding:2px 8px; font-size:0.68rem; font-weight:bold; }
+        .badge-etudiant  { background:var(--hecg-teal);   color:white; border-radius:10px; padding:2px 8px; font-size:0.68rem; font-weight:bold; }
+        .btn-logout { background:none; border:1px solid #aaa; color:#666; padding:3px 8px; border-radius:4px; cursor:pointer; font-size:0.7rem; }
 
-        .dynamic-block { background: #f1f3f5; padding: 10px; border-radius: 5px; margin-top: 8px; border: 1px dashed var(--hecg-teal); }
-        .mission-row { margin-top: 3px; display: flex; gap: 5px; align-items: center; }
-        .btn-action { background: var(--hecg-teal); color: white; padding: 6px 10px; border: none; border-radius: 4px; cursor: pointer; margin-top: 5px; font-weight: bold; font-size: 0.75rem; width: 100%; }
-        .btn-generate { background: var(--hecg-orange); color: white; padding: 15px; border: none; width: 100%; cursor: pointer; font-weight: bold; font-size: 1rem; margin-top: 20px; border-radius: 6px; }
+        /* ACTION BAR */
+        .action-bar { display:flex; gap:7px; margin-bottom:10px; flex-wrap:wrap; }
+        .btn-hist-action { flex:1; min-width:100px; padding:8px 6px; border:none; border-radius:5px; cursor:pointer; font-weight:bold; font-size:0.77rem; transition:opacity 0.2s; }
+        .btn-hist-action:hover { opacity:0.85; }
+        #btn-draft { background:var(--hecg-teal); color:white; }
+        #btn-hist  { background:var(--hecg-navy); color:white; }
+        #btn-all   { background:#5a6480; color:white; }
+        #sync-status { font-size:0.68rem; min-height:13px; margin-bottom:5px; text-align:right; }
+        .sync-ok { color:#28a745; } .sync-err { color:#dc3545; } .sync-info { color:#6c757d; }
 
-        /* --- BOUTONS HISTORIQUE --- */
-        .action-bar { display: flex; gap: 8px; margin-bottom: 15px; }
-        .btn-hist-action { flex: 1; padding: 9px 10px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 0.8rem; transition: opacity 0.2s; }
-        .btn-hist-action:hover { opacity: 0.85; }
-        #btn-draft { background: var(--hecg-teal); color: white; }
-        #btn-hist { background: var(--hecg-navy); color: white; }
-        #sync-status { font-size: 0.7rem; min-height: 14px; margin-bottom: 6px; text-align: right; }
-        .sync-ok { color: #28a745; } .sync-err { color: #dc3545; } .sync-info { color: #6c757d; }
+        /* MODAL */
+        .modal-overlay { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:10000; align-items:center; justify-content:center; }
+        .modal-panel { background:white; width:620px; max-height:82vh; border-radius:10px; overflow:hidden; display:flex; flex-direction:column; box-shadow:0 12px 45px rgba(0,0,0,0.35); }
+        .modal-header { background:var(--hecg-dark); color:white; padding:14px 18px; display:flex; justify-content:space-between; align-items:center; }
+        .modal-header span { font-weight:bold; font-size:1rem; }
+        .modal-close { background:none; border:none; color:white; font-size:1.6rem; cursor:pointer; line-height:1; padding:0 4px; }
+        .modal-tabs { display:flex; border-bottom:2px solid #eee; }
+        .modal-tab { flex:1; padding:10px; border:none; cursor:pointer; font-weight:bold; font-size:0.82rem; background:#f8f9fa; color:#666; transition:all 0.2s; }
+        .modal-tab.active { background:var(--hecg-dark); color:white; }
+        #history-list { overflow-y:auto; flex:1; min-height:180px; }
+        .history-item { display:flex; align-items:center; justify-content:space-between; padding:11px 16px; border-bottom:1px solid #f0f0f0; }
+        .history-item:hover { background:#fafafa; }
+        .history-name { font-weight:bold; color:var(--hecg-dark); font-size:0.87rem; }
+        .history-meta { font-size:0.72rem; color:#999; margin-top:2px; }
+        .history-actions { display:flex; gap:6px; flex-shrink:0; }
+        .btn-load { background:var(--hecg-teal); color:white; border:none; padding:5px 11px; border-radius:4px; cursor:pointer; font-size:0.77rem; font-weight:bold; }
+        .btn-del  { background:#dc3545; color:white; border:none; padding:5px 9px; border-radius:4px; cursor:pointer; font-size:0.77rem; }
+        .history-empty { color:#bbb; text-align:center; padding:30px 20px; font-style:italic; }
+        .history-group { background:#eef2f5; padding:8px 16px; font-weight:bold; color:var(--hecg-dark); font-size:0.8rem; border-top:1px solid #dde; }
+        .history-search { padding:10px 14px; border-bottom:1px solid #eee; }
+        .history-search input { width:100%; padding:6px 10px; border:1px solid #ccc; border-radius:4px; font-size:0.82rem; box-sizing:border-box; }
 
-        /* --- MODAL HISTORIQUE --- */
-        #history-modal {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.6); z-index: 10000;
-            align-items: center; justify-content: center;
-        }
-        .history-panel {
-            background: white; width: 580px; max-height: 78vh;
-            border-radius: 10px; overflow: hidden;
-            display: flex; flex-direction: column;
-            box-shadow: 0 12px 45px rgba(0,0,0,0.35);
-        }
-        .history-header {
-            background: var(--hecg-dark); color: white;
-            padding: 16px 20px; display: flex;
-            justify-content: space-between; align-items: center;
-        }
-        .history-header span { font-weight: bold; font-size: 1.05rem; }
-        .history-close { background: none; border: none; color: white; font-size: 1.7rem; cursor: pointer; line-height: 1; padding: 0 4px; }
-        .history-tabs { display: flex; border-bottom: 2px solid #eee; }
-        .history-tab { flex: 1; padding: 12px; border: none; cursor: pointer; font-weight: bold; font-size: 0.85rem; background: #f8f9fa; color: #666; transition: all 0.2s; }
-        .history-tab.active { background: var(--hecg-dark); color: white; }
-        #history-list { overflow-y: auto; flex: 1; min-height: 180px; }
-        .history-item { display: flex; align-items: center; justify-content: space-between; padding: 13px 18px; border-bottom: 1px solid #f0f0f0; }
-        .history-item:hover { background: #fafafa; }
-        .history-name { font-weight: bold; color: var(--hecg-dark); font-size: 0.9rem; }
-        .history-meta { font-size: 0.75rem; color: #999; margin-top: 3px; }
-        .history-actions { display: flex; gap: 7px; flex-shrink: 0; }
-        .btn-load { background: var(--hecg-teal); color: white; border: none; padding: 6px 13px; border-radius: 4px; cursor: pointer; font-size: 0.8rem; font-weight: bold; }
-        .btn-del { background: #dc3545; color: white; border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 0.8rem; }
-        .history-empty { color: #bbb; text-align: center; padding: 35px 20px; font-style: italic; }
+        /* ALERT OVERLAY */
+        #page-alert { display:none; position:fixed; top:20px; left:50%; transform:translateX(-50%); background:#dc3545; color:white; padding:12px 24px; border-radius:8px; z-index:99999; font-weight:bold; font-size:0.9rem; box-shadow:0 4px 15px rgba(0,0,0,0.3); }
 
-        /* --- STYLE DU CV --- */
-        #cv-page {
-            width: 210mm; height: 297mm; min-height: 297mm;
-            background: white; position: relative;
-            display: flex; flex-direction: column;
-            box-shadow: 0 0 25px rgba(0,0,0,0.25);
-            box-sizing: border-box;
-            -webkit-print-color-adjust: exact;
-            print-color-adjust: exact;
-        }
-
-        .logo-hecg { position: absolute; top: 75px; right: 50px; width: 120px; z-index: 10; }
-        .cv-header { display: flex; padding: 40px 50px 25px; align-items: center; }
-        .photo-wrap { width: 135px; height: 135px; padding: 4px; background: var(--gradient); display: flex; justify-content: center; align-items: center; }
-        .photo-wrap img { width: 100%; height: 100%; object-fit: cover; background: #fff; }
-
-        .header-main { flex: 1; margin-left: 30px; overflow: hidden; }
-        .p-name { color: var(--hecg-teal); font-weight: bold; margin: 0; line-height: 1.1; white-space: nowrap; }
-        .p-age { font-size: 18px; color: var(--hecg-navy); margin-bottom: 8px; }
-
-        .p-search { color: var(--hecg-navy); font-size: 14px; margin: 5px 0; line-height: 1.2; max-width: 380px; }
-
-        .contact-column {
-            display: flex;
-            flex-direction: column;
-            gap: var(--adj-contact-gap);
-            margin-top: 12px;
-            font-size: 11px;
-            color: #444;
-            max-width: 380px;
-        }
-        .contact-item-row { display: flex; align-items: center; gap: 8px; word-break: break-all; }
-        .contact-item-row i { color: var(--hecg-navy); font-size: 12px; width: 16px; text-align: center; }
-
-        .cv-container { display: flex; flex: 1; padding: 0 50px 30px; gap: 35px; position: relative; }
-        .col-left { width: 34%; display: flex; flex-direction: column; }
-        .col-right { width: 66%; border-left: var(--line-width) solid var(--hecg-orange); padding-left: 25px; margin-top: 25px; }
-
-        .section-box {
-            background: var(--gradient) !important; color: white !important; padding: 8px 12px;
-            text-transform: uppercase; font-weight: bold; font-size: 13px; margin: 0 0 var(--adj-section-mb);
-            position: relative;
-        }
-
-        .col-left .section-box { margin-top: var(--adj-section-mt); }
-        .col-left .section-box::after { content: ""; position: absolute; top: 0; right: -36px; width: 36px; height: var(--line-width); background: var(--hecg-orange); }
-        .col-right .section-box::before { content: ""; position: absolute; top: 0; left: -26px; width: 26px; height: var(--line-width); background: var(--hecg-orange); }
-
-        .cv-block { margin-bottom: var(--adj-block-mb); }
-        .cv-title { font-weight: bold; font-size: 14px; color: var(--hecg-navy); display: flex; justify-content: space-between; }
-        .cv-sub { font-size: 12.5px; color: #555; font-style: italic; margin-bottom: 3px; }
-        ul { padding-left: 18px; margin: var(--adj-ul-m) 0; list-style: none; }
-        li { font-size: 12px; color: var(--hecg-navy); margin-bottom: var(--adj-li-mb); position: relative; line-height: 1.3; }
-        li::before { content: "•"; color: var(--hecg-orange); font-weight: bold; position: absolute; left: -14px; }
-
-        .footer-cv { margin-top: auto; padding-top: 10px; }
-        .edition-stamp { position: absolute; bottom: 12px; right: 20px; font-size: 9px; color: #aaa; }
+        /* CV DESIGN - NE PAS MODIFIER */
+        #cv-page { width:210mm; height:297mm; min-height:297mm; background:white; position:relative; display:flex; flex-direction:column; box-shadow:0 0 25px rgba(0,0,0,0.25); box-sizing:border-box; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+        .logo-hecg { position:absolute; top:75px; right:50px; width:120px; z-index:10; }
+        .cv-header { display:flex; padding:40px 50px 25px; align-items:center; }
+        .photo-wrap { width:135px; height:135px; padding:4px; background:var(--gradient); display:flex; justify-content:center; align-items:center; flex-shrink:0; }
+        .photo-wrap img { width:100%; height:100%; object-fit:cover; background:#fff; }
+        .header-main { flex:1; margin-left:30px; overflow:hidden; }
+        .p-name { color:var(--hecg-teal); font-weight:bold; margin:0; line-height:1.1; white-space:nowrap; }
+        .p-age { font-size:18px; color:var(--hecg-navy); margin-bottom:8px; }
+        .p-search { color:var(--hecg-navy); font-size:14px; margin:5px 0; line-height:1.2; max-width:380px; }
+        .contact-column { display:flex; flex-direction:column; gap:var(--adj-contact-gap); margin-top:12px; font-size:11px; color:#444; max-width:380px; }
+        .contact-item-row { display:flex; align-items:center; gap:8px; word-break:break-all; }
+        .contact-item-row i { color:var(--hecg-navy); font-size:12px; width:16px; text-align:center; }
+        .cv-container { display:flex; flex:1; padding:0 50px 20px; gap:35px; position:relative; min-height:0; }
+        .col-left { width:34%; display:flex; flex-direction:column; min-height:0; }
+        .col-right { width:66%; border-left:var(--line-width) solid var(--hecg-orange); padding-left:25px; margin-top:25px; }
+        .section-box { background:var(--gradient) !important; color:white !important; padding:8px 12px; text-transform:uppercase; font-weight:bold; font-size:13px; margin:0 0 var(--adj-section-mb); position:relative; }
+        .col-left .section-box { margin-top:var(--adj-section-mt); }
+        .col-left .section-box::after { content:""; position:absolute; top:0; right:-36px; width:36px; height:var(--line-width); background:var(--hecg-orange); }
+        .col-right .section-box::before { content:""; position:absolute; top:0; left:-26px; width:26px; height:var(--line-width); background:var(--hecg-orange); }
+        .cv-block { margin-bottom:var(--adj-block-mb); }
+        .cv-title { font-weight:bold; font-size:14px; color:var(--hecg-navy); display:flex; justify-content:space-between; }
+        .cv-sub { font-size:12.5px; color:#555; font-style:italic; margin-bottom:3px; }
+        ul { padding-left:18px; margin:var(--adj-ul-m) 0; list-style:none; }
+        li { font-size:12px; color:var(--hecg-navy); margin-bottom:var(--adj-li-mb); position:relative; line-height:1.3; }
+        li::before { content:"•"; color:var(--hecg-orange); font-weight:bold; position:absolute; left:-14px; }
+        .footer-cv { margin-top:auto; padding-top:6px; flex-shrink:0; }
+        .edition-stamp { position:absolute; bottom:10px; right:20px; font-size:9px; color:#aaa; }
 
         @media print {
-            @page { size: A4; margin: 0; }
-            body { background: white; height: auto; }
-            #form-side, #login-screen, #history-modal { display: none !important; }
-            #preview-side { width: 100%; padding: 0; margin: 0; overflow: visible; }
-            #cv-page { box-shadow: none; margin: 0; border: none; width: 210mm; height: 297mm; }
-            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+            @page { size:A4; margin:0; }
+            body { background:white; height:auto; }
+            #form-side, #login-screen, .modal-overlay, #page-alert { display:none !important; }
+            #preview-side { width:100%; padding:0; margin:0; overflow:visible; }
+            #cv-page { box-shadow:none; margin:0; border:none; width:210mm; height:297mm; }
+            * { -webkit-print-color-adjust:exact !important; print-color-adjust:exact !important; }
         }
     </style>
 </head>
 <body onload="init()">
 
+<!-- LOGIN -->
 <div id="login-screen">
-    <img src="https://hecg.fr/wp-content/uploads/2025/03/LOGO-FORMAT-PNG-1-1.png" style="width: 140px; margin-bottom: 20px;">
-    <h1>Accès Étudiant HECG</h1>
-    <p style="margin-bottom: 20px; font-style: italic;">Saisissez votre code personnel de suivi</p>
+    <img src="https://hecg.fr/wp-content/uploads/2025/03/LOGO-FORMAT-PNG-1-1.png" style="width:140px; margin-bottom:20px;">
+    <h1 style="margin-bottom:5px;">Générateur de CV HECG</h1>
+    <p style="margin-bottom:20px; font-style:italic; font-size:0.9rem;">Saisissez vos identifiants</p>
     <div class="login-box">
-        <input type="password" id="access-code" placeholder="Code d'accès">
-        <button onclick="checkAccess()">ENTRER</button>
+        <p class="login-field-label">Nom d'utilisateur</p>
+        <input type="text" id="access-nom" placeholder="Votre NOM" autocomplete="username" onkeydown="if(event.key==='Enter')checkAccess()">
+        <p class="login-field-label">Mot de passe</p>
+        <input type="password" id="access-mdp" placeholder="Mot de passe" autocomplete="current-password" onkeydown="if(event.key==='Enter')checkAccess()">
+        <button onclick="checkAccess()">CONNEXION</button>
     </div>
-    <p id="login-error" style="color: #ff4d4d; margin-top: 15px; display: none;">Code non homologué.</p>
+    <p id="login-error" style="color:#ff4d4d; margin-top:15px; display:none; font-size:0.88rem;">Identifiants incorrects.</p>
 </div>
 
+<!-- APP -->
 <div id="app-content">
-    <div id="form-side">
-        <h2 style="text-align: center; color: var(--hecg-dark); font-size: 1.3rem; margin-bottom: 10px;">Configurateur de CV</h2>
+  <div id="form-side">
+    <h2 style="text-align:center; color:var(--hecg-dark); font-size:1.2rem; margin-bottom:8px;">Configurateur de CV</h2>
 
-        <div id="sync-status"></div>
-        <div class="action-bar">
-            <button class="btn-hist-action" id="btn-draft" onclick="saveDraft()">💾 Enregistrer brouillon</button>
-            <button class="btn-hist-action" id="btn-hist" onclick="showHistory()">📋 Mes CV</button>
-        </div>
-
-        <div class="form-section">
-            <h3>1. Profil & Photo</h3>
-            <input type="text" id="nom" placeholder="NOM" oninput="render()">
-            <input type="text" id="prenom" placeholder="Prénom" oninput="render()">
-            <label>Genre</label>
-<select id="genre" onchange="render()">
-    <option value="Garçon">Garçon</option>
-    <option value="Fille">Fille</option>
-</select>
-            <label>Date de Naissance</label>
-            <input type="date" id="dob" oninput="render()">
-            <label>LinkedIn (Obligatoire)</label>
-            <input type="text" id="linkedin" placeholder="Lien profil" oninput="render()">
-            <label>Photo</label>
-            <input type="file" onchange="uploadImage(this)">
-        </div>
-
-        <div class="form-section">
-            <h3>2. Formation & École</h3>
-            <select id="diplome_select" onchange="render()">
-                <option value="BTS GPME 1">BTS GPME 1</option>
-                <option value="BTS GPME 2">BTS GPME 2</option>
-                <option value="BTS CG 1">BTS CG 1</option>
-                <option value="BTS CG 2">BTS CG 2</option>
-                <option value="DCG 1">DCG 1</option>
-                <option value="DCG 2">DCG 2</option>
-                <option value="DCG 3">DCG 3</option>
-                <option value="DSCG">DSCG</option>
-                <option value="Bachelor CDSP">Bachelor CDSP</option>
-            </select>
-            <input type="text" id="tel" placeholder="Téléphone" oninput="render()">
-            <input type="email" id="email" placeholder="Email" oninput="render()">
-            <input type="text" id="ville" placeholder="Ville / Mobilité" oninput="render()">
-            <select id="vehicule" onchange="render()">
-                <option value="Oui">Véhiculé(e) : Oui</option>
-                <option value="Non">Véhiculé(e) : Non</option>
-            </select>
-            <div id="edu-inputs"></div>
-            <button class="btn-action" onclick="addEdu()">+ Ajouter une formation</button>
-        </div>
-
-        <div class="form-section">
-            <h3>3. Expériences Professionnelles (Max 4)</h3>
-            <div id="exp-inputs"></div>
-            <button class="btn-action" onclick="addExp()">+ Ajouter expérience</button>
-        </div>
-
-        <div class="form-section">
-            <h3>4. Compétences & Centres d'intérêt</h3>
-            <label>Soft Skills (Max 4)</label>
-            <div class="checkbox-group" id="soft-checks"></div>
-            <input type="text" id="soft_extra" placeholder="Autre Soft Skill" oninput="render()">
-
-            <label style="margin-top:10px">Compétences Métier (Max 4)</label>
-            <div class="checkbox-group" id="hard-checks"></div>
-            <input type="text" id="hard_extra" placeholder="Autre Compétence" oninput="render()">
-
-            <label style="margin-top:10px">Informatique</label>
-            <div class="checkbox-group">
-                <div><input type="checkbox" id="check-office" checked onchange="render()"> Pack Office</div>
-            </div>
-            <input type="text" id="logiciels" placeholder="Logiciels Comptables" oninput="render()" style="margin-bottom:5px">
-            <input type="text" id="info_extra" placeholder="Autre informatique" oninput="render()">
-
-            <label style="margin-top:10px">Centres d'intérêt (Max 3)</label>
-            <div class="checkbox-group" id="hobby-checks"></div>
-            <input type="text" id="hobby_extra" placeholder="Autre centre d'intérêt" oninput="render()">
-        </div>
-
-        <div class="form-section">
-            <h3>5. Langues</h3>
-            <div id="lang-inputs"></div>
-            <button class="btn-action" onclick="addLang()">+ Ajouter une langue</button>
-        </div>
-
-        <button class="btn-generate" onclick="finalValidation()">🚀 GÉNÉRER LE CV (PDF)</button>
+    <div id="user-info-bar">
+        <span><strong id="user-display-name">—</strong> <span id="user-type-badge"></span></span>
+        <button class="btn-logout" onclick="logout()">⎋ Déconnexion</button>
     </div>
 
-    <div id="preview-side">
-        <div id="cv-page">
-            <img class="logo-hecg" src="https://hecg.fr/wp-content/uploads/2025/03/LOGO-FORMAT-PNG-1-1.png">
-            <div class="cv-header">
-                <div class="photo-wrap"><img id="cv-img" src="https://via.placeholder.com/150?text=PHOTO"></div>
-                <div class="header-main">
-                    <h1 class="p-name" id="out-full-name">NOM Prénom</h1>
-                    <div class="p-age"><span id="out-age">--</span> ans</div>
-                    <div class="p-search">Recherche une alternance en <b id="out-dip-label">--</b><br>Rythme 2j à l'école / 3j en entreprise</div>
-
-                    <div class="contact-column">
-                        <div class="contact-item-row"><i class="fa fa-phone"></i> <span id="out-tel">06 00 00 00 00</span></div>
-                        <div class="contact-item-row"><i class="fa fa-car"></i> <span id="out-car">Véhiculé(e) : Oui</span></div>
-                        <div class="contact-item-row"><i class="fa fa-envelope"></i> <span id="out-email">email@etudiant.fr</span></div>
-                        <div class="contact-item-row"><i class="fab fa-linkedin"></i> <span id="out-linkedin">LinkedIn</span></div>
-                        <div class="contact-item-row"><i class="fa fa-map-marker-alt"></i> <span id="out-ville">Marseille</span></div>
-                    </div>
-                </div>
-            </div>
-            <div class="cv-container">
-                <div class="col-left">
-                    <div class="section-box">Soft Skills</div>
-                    <ul id="out-soft"></ul>
-                    <div class="section-box">Compétences</div>
-                    <ul id="out-hard"></ul>
-                    <div class="section-box">Informatique</div>
-                    <ul id="out-info"></ul>
-                    <div class="section-box">Langues</div>
-                    <ul id="out-langs"></ul>
-                    <div class="section-box">Centres d'intérêt</div>
-                    <ul id="out-hobbies"></ul>
-                    <div class="footer-cv">
-                        <div class="section-box">Contact École</div>
-                        <div style="font-size:11.5px; color: var(--hecg-navy); line-height: 1.5; padding-left: 5px;">
-                            <b>M. BENMOSTEFA - Directeur</b><br>📞 06 25 43 53 90<br>📧 contact@hecg.fr<br>🌐 www.hecg.fr
-                        </div>
-                    </div>
-                </div>
-                <div class="col-right">
-                    <div class="section-box">Formations</div>
-                    <div class="cv-block">
-                        <div class="cv-title">HECG <span id="out-dip-year">2026-2028</span></div>
-                        <div class="cv-sub"><span id="out-genre-etudiant">Étudiant</span> en <span class="dyn-dip-name">--</span></div>
-                        <div style="font-size:11px; color:#888">Formation en cours</div>
-                    </div>
-                    <div id="out-edu-list"></div>
-                    <div class="section-box">Expériences Professionnelles</div>
-                    <div id="out-exp-list"></div>
-                </div>
-            </div>
-            <div class="edition-stamp">Date d'édition : <span id="out-date"></span></div>
-        </div>
+    <div id="sync-status"></div>
+    <div class="action-bar">
+        <button class="btn-hist-action" id="btn-draft" onclick="saveDraft()">💾 Brouillon</button>
+        <button class="btn-hist-action" id="btn-hist"  onclick="showHistory('mine')">📋 Mes CV</button>
+        <button class="btn-hist-action" id="btn-all"   onclick="showHistory('all')" style="display:none">📊 Tous les CV</button>
     </div>
+
+    <!-- 1. PROFIL -->
+    <div class="form-section">
+        <h3>1. Profil &amp; Photo</h3>
+        <input type="text" id="nom" placeholder="NOM" oninput="render()">
+        <input type="text" id="prenom" placeholder="Prénom" oninput="render()">
+        <label>Genre</label>
+        <select id="genre" onchange="render()">
+            <option value="Garçon">Garçon</option>
+            <option value="Fille">Fille</option>
+        </select>
+        <label>Date de Naissance</label>
+        <input type="date" id="dob" oninput="render()">
+        <label>LinkedIn (Obligatoire)</label>
+        <input type="text" id="linkedin" placeholder="Lien profil" oninput="render()">
+        <label>Photo</label>
+        <input type="file" onchange="uploadImage(this)">
+    </div>
+
+    <!-- 2. FORMATION -->
+    <div class="form-section">
+        <h3>2. Formation &amp; École</h3>
+        <select id="diplome_select" onchange="render()">
+            <option value="BTS GPME 1">BTS GPME 1</option>
+            <option value="BTS GPME 2">BTS GPME 2</option>
+            <option value="BTS CG 1">BTS CG 1</option>
+            <option value="BTS CG 2">BTS CG 2</option>
+            <option value="DCG 1">DCG 1</option>
+            <option value="DCG 2">DCG 2</option>
+            <option value="DCG 3">DCG 3</option>
+            <option value="DSCG">DSCG</option>
+            <option value="Bachelor CDSP">Bachelor CDSP</option>
+        </select>
+        <input type="text"  id="tel"     placeholder="Téléphone" oninput="render()">
+        <input type="email" id="email"   placeholder="Email"     oninput="render()">
+        <input type="text"  id="ville"   placeholder="Ville / Mobilité" oninput="render()">
+        <select id="vehicule" onchange="render()">
+            <option value="Oui">Véhiculé(e) : Oui</option>
+            <option value="Non">Véhiculé(e) : Non</option>
+        </select>
+        <div id="edu-inputs"></div>
+        <button class="btn-action" onclick="addEdu()">+ Ajouter une formation</button>
+    </div>
+
+    <!-- 3. EXPÉRIENCES -->
+    <div class="form-section">
+        <h3>3. Expériences Professionnelles (Max 4)</h3>
+        <div id="exp-inputs"></div>
+        <button class="btn-action" onclick="addExp()">+ Ajouter expérience</button>
+    </div>
+
+    <!-- 4. COMPÉTENCES -->
+    <div class="form-section">
+        <h3>4. Compétences &amp; Centres d'intérêt</h3>
+        <label>Soft Skills (Max 4 cases + 3 libres)</label>
+        <div class="checkbox-group" id="soft-checks"></div>
+        <input type="text" id="soft_extra1" placeholder="Soft Skill libre 1" oninput="render()">
+        <input type="text" id="soft_extra2" placeholder="Soft Skill libre 2" oninput="render()">
+        <input type="text" id="soft_extra3" placeholder="Soft Skill libre 3" oninput="render()">
+
+        <label style="margin-top:8px">Compétences Métier (Max 4 cases + 3 libres)</label>
+        <div class="checkbox-group" id="hard-checks"></div>
+        <input type="text" id="hard_extra1" placeholder="Compétence libre 1" oninput="render()">
+        <input type="text" id="hard_extra2" placeholder="Compétence libre 2" oninput="render()">
+        <input type="text" id="hard_extra3" placeholder="Compétence libre 3" oninput="render()">
+
+        <label style="margin-top:8px">Informatique (3 libres)</label>
+        <div class="checkbox-group">
+            <div><input type="checkbox" id="check-office" checked onchange="render()"> Pack Office</div>
+        </div>
+        <input type="text" id="info_extra1" placeholder="Logiciels / Info libre 1" oninput="render()">
+        <input type="text" id="info_extra2" placeholder="Logiciels / Info libre 2" oninput="render()">
+        <input type="text" id="info_extra3" placeholder="Logiciels / Info libre 3" oninput="render()">
+
+        <label style="margin-top:8px">Centres d'intérêt (Max 3 cases + 3 libres)</label>
+        <div class="checkbox-group" id="hobby-checks"></div>
+        <input type="text" id="hobby_extra1" placeholder="Intérêt libre 1" oninput="render()">
+        <input type="text" id="hobby_extra2" placeholder="Intérêt libre 2" oninput="render()">
+        <input type="text" id="hobby_extra3" placeholder="Intérêt libre 3" oninput="render()">
+    </div>
+
+    <!-- 5. LANGUES -->
+    <div class="form-section">
+        <h3>5. Langues</h3>
+        <div id="lang-inputs"></div>
+        <button class="btn-action" onclick="addLang()">+ Ajouter une langue</button>
+    </div>
+
+    <button class="btn-generate" onclick="finalValidation()">🚀 GÉNÉRER LE CV (PDF)</button>
+  </div>
+
+  <!-- PREVIEW CV -->
+  <div id="preview-side">
+    <div id="cv-page">
+        <img class="logo-hecg" src="https://hecg.fr/wp-content/uploads/2025/03/LOGO-FORMAT-PNG-1-1.png">
+        <div class="cv-header">
+            <div class="photo-wrap"><img id="cv-img" src="https://via.placeholder.com/150?text=PHOTO"></div>
+            <div class="header-main">
+                <h1 class="p-name" id="out-full-name">NOM Prénom</h1>
+                <div class="p-age"><span id="out-age">--</span> ans</div>
+                <div class="p-search">Recherche une alternance en <b id="out-dip-label">--</b><br>Rythme 2j à l'école / 3j en entreprise</div>
+                <div class="contact-column">
+                    <div class="contact-item-row"><i class="fa fa-phone"></i> <span id="out-tel">06 00 00 00 00</span></div>
+                    <div class="contact-item-row"><i class="fa fa-car"></i> <span id="out-car">Véhiculé(e) : Oui</span></div>
+                    <div class="contact-item-row"><i class="fa fa-envelope"></i> <span id="out-email">email@etudiant.fr</span></div>
+                    <div class="contact-item-row"><i class="fab fa-linkedin"></i> <span id="out-linkedin">LinkedIn</span></div>
+                    <div class="contact-item-row"><i class="fa fa-map-marker-alt"></i> <span id="out-ville">Marseille</span></div>
+                </div>
+            </div>
+        </div>
+        <div class="cv-container">
+            <div class="col-left">
+                <div class="section-box">Soft Skills</div>     <ul id="out-soft"></ul>
+                <div class="section-box">Compétences</div>     <ul id="out-hard"></ul>
+                <div class="section-box">Informatique</div>    <ul id="out-info"></ul>
+                <div class="section-box">Langues</div>         <ul id="out-langs"></ul>
+                <div class="section-box">Centres d'intérêt</div><ul id="out-hobbies"></ul>
+                <div class="footer-cv">
+                    <div class="section-box">Contact École</div>
+                    <div style="font-size:11.5px; color:var(--hecg-navy); line-height:1.5; padding-left:5px;">
+                        <b>M. BENMOSTEFA - Directeur</b><br>📞 06 25 43 53 90<br>📧 contact@hecg.fr<br>🌐 www.hecg.fr
+                    </div>
+                </div>
+            </div>
+            <div class="col-right">
+                <div class="section-box">Formations</div>
+                <div class="cv-block">
+                    <div class="cv-title">HECG <span id="out-dip-year">2026-2028</span></div>
+                    <div class="cv-sub"><span id="out-genre-etudiant">Étudiant</span> en <span class="dyn-dip-name">--</span></div>
+                    <div style="font-size:11px; color:#888">Formation en cours</div>
+                </div>
+                <div id="out-edu-list"></div>
+                <div class="section-box">Expériences Professionnelles</div>
+                <div id="out-exp-list"></div>
+            </div>
+        </div>
+        <div class="edition-stamp">Date d'édition : <span id="out-date"></span></div>
+    </div>
+  </div>
 </div>
 
 <!-- MODAL HISTORIQUE -->
-<div id="history-modal">
-    <div class="history-panel">
-        <div class="history-header">
-            <span>📁 Mes CV enregistrés</span>
-            <button class="history-close" onclick="closeHistory()">×</button>
+<div id="history-modal" class="modal-overlay">
+    <div class="modal-panel">
+        <div class="modal-header">
+            <span id="modal-title">📁 Mes CV enregistrés</span>
+            <button class="modal-close" onclick="closeHistory()">×</button>
         </div>
-        <div class="history-tabs">
-            <button id="tab-drafts" class="history-tab active" onclick="showTab('drafts')">📝 Brouillons</button>
-            <button id="tab-final" class="history-tab" onclick="showTab('final')">✅ CV Finalisés</button>
+        <div class="modal-tabs" id="modal-tabs">
+            <button id="tab-drafts" class="modal-tab active" onclick="showTab('drafts')">📝 Brouillons</button>
+            <button id="tab-final"  class="modal-tab"        onclick="showTab('final')">✅ CV Finalisés</button>
+            <button id="tab-all"    class="modal-tab"        onclick="showTab('all')" style="display:none">📊 Tous étudiants</button>
+        </div>
+        <div class="history-search" id="search-bar" style="display:none">
+            <input type="text" id="search-input" placeholder="Rechercher un étudiant…" oninput="filterHistory()">
         </div>
         <div id="history-list"></div>
     </div>
 </div>
 
+<!-- ALERTE PAGE -->
+<div id="page-alert">⚠️ ALERTE : CV sur 2 pages !</div>
+
 <script>
     const apiUrl = "https://script.google.com/macros/s/AKfycbyhCy3RFGQ9FuD7m8-B_b8r4E8YJ3W1hBjiUhTRADDksVQr5Qolh86JB4jzOOQEYPHc4w/exec";
     const DRIVE_FOLDER_BROUILLONS = '1FYntYgAef6TAaN4DA3i4t7wk4dlHHhR7';
     const DRIVE_FOLDER_FINAL      = '1WWCs6isHpUmOQ3YLlvsn0dQFIIeVwOP_';
+    const SHEET_ID = '1Vy0VEfR7XeooKMC46PDXb5wlR-BVMTEbppmSGJFe4RM';
+
     const db = {
-        soft: ["Rigueur", "Autonomie", "Esprit d'équipe", "Organisation", "Patience", "Réactivité", "Discrétion", "Capacité d'adaptation"],
-        hard: ["Saisie comptable", "Fiscalité", "Paie", "Analyse financière", "Audit", "TVA", "Bilan", "Rapprochement bancaire"],
-        hobbies: ["Voyage", "Sport", "Cuisine", "Cinéma", "Musique", "Lecture", "Photographie"],
-        levels: {
-            "A1": "A1 - Débutant", "A2": "A2 - Élémentaire", "B1": "B1 - Intermédiaire",
-            "B2": "B2 - Intermédiaire avancé", "C1": "C1 - Autonome", "C2": "C2 - Maîtrise"
-        },
+        soft: ["Rigueur","Autonomie","Esprit d'équipe","Organisation","Patience","Réactivité","Discrétion","Capacité d'adaptation"],
+        hard: ["Saisie comptable","Fiscalité","Paie","Analyse financière","Audit","TVA","Bilan","Rapprochement bancaire"],
+        hobbies: ["Voyage","Sport","Cuisine","Cinéma","Musique","Lecture","Photographie"],
+        levels: { "A1":"A1 - Débutant","A2":"A2 - Élémentaire","B1":"B1 - Intermédiaire","B2":"B2 - Intermédiaire avancé","C1":"C1 - Autonome","C2":"C2 - Maîtrise" },
         years: {
-            "BTS GPME 1": "2026-2028", "BTS CG 1": "2026-2028",
-            "BTS GPME 2": "2026-2027", "BTS CG 2": "2026-2027",
-            "DCG 1": "2026-2029", "DCG 2": "2026-2028", "DCG 3": "2026-2027", "DSCG": "2026-2028", "Bachelor CDSP": "2026-2027"
+            "BTS GPME 1":"2026-2028","BTS CG 1":"2026-2028","BTS GPME 2":"2026-2027","BTS CG 2":"2026-2027",
+            "DCG 1":"2026-2029","DCG 2":"2026-2028","DCG 3":"2026-2027","DSCG":"2026-2028","Bachelor CDSP":"2026-2027"
         }
     };
 
     let expCt = 0, eduCt = 0;
-    let currentUserCode = '';
-    let fitTimer = null;
+    let currentUserNom = '', currentUserPrenom = '', currentUserType = '';
+    let fitTimer = null, allCvsCache = null;
 
+    // =============================================
+    // INIT & AUTH
+    // =============================================
     function init() {
         genChecks('soft-checks', db.soft, 'soft', 4);
         genChecks('hard-checks', db.hard, 'hard', 4);
         genChecks('hobby-checks', db.hobbies, 'hobby', 3);
-        document.getElementById('out-date').innerText = new Date().toLocaleDateString();
+        document.getElementById('out-date').innerText = new Date().toLocaleDateString('fr-FR');
         render();
     }
 
     async function checkAccess() {
-        const code = document.getElementById('access-code').value;
+        const nom = document.getElementById('access-nom').value.trim();
+        const mdp = document.getElementById('access-mdp').value.trim();
         const btn = document.querySelector('.login-box button');
-        if (!code) return;
-        btn.innerText = "Vérification..."; btn.disabled = true;
+        if (!nom || !mdp) return;
+        btn.innerText = "Vérification…"; btn.disabled = true;
+        document.getElementById('login-error').style.display = 'none';
         try {
-            const res = await fetch(apiUrl + "?code=" + encodeURIComponent(code));
+            const res  = await fetch(apiUrl + `?action=validate&nom=${encodeURIComponent(nom)}&mdp=${encodeURIComponent(mdp)}`);
             const data = await res.json();
             if (data.valid) {
-                currentUserCode = code;
+                currentUserNom    = data.nom;
+                currentUserPrenom = data.prenom;
+                currentUserType   = data.type; // 'Personnel' | 'Etudiant' | 'EtudiantHECG'
+                setupUIForUser();
                 document.getElementById('login-screen').style.display = 'none';
                 document.getElementById('app-content').style.display = 'flex';
                 render();
-                loadFromDrive(code);
-            } else { document.getElementById('login-error').style.display = 'block'; }
-        } catch (e) { alert("Erreur serveur."); } finally { btn.innerText = "ENTRER"; btn.disabled = false; }
+                if (currentUserType !== 'EtudiantHECG') loadFromDrive();
+                else setSyncStatus('Mode démo — aucune sauvegarde', 'sync-info');
+            } else {
+                document.getElementById('login-error').style.display = 'block';
+            }
+        } catch(e) {
+            alert("Erreur de connexion au serveur.");
+        } finally {
+            btn.innerText = "CONNEXION"; btn.disabled = false;
+        }
     }
 
+    function setupUIForUser() {
+        const isHECG  = currentUserType === 'EtudiantHECG';
+        const isPerso = currentUserType === 'Personnel';
+        document.getElementById('user-display-name').textContent = `${currentUserPrenom} ${currentUserNom}`;
+        const badge = document.getElementById('user-type-badge');
+        badge.textContent = isHECG ? 'Démo HECG' : (isPerso ? 'Personnel' : 'Étudiant');
+        badge.className   = isPerso ? 'badge-personnel' : 'badge-etudiant';
+        document.getElementById('btn-draft').style.display = isHECG ? 'none' : '';
+        document.getElementById('btn-hist').style.display  = isHECG ? 'none' : '';
+        document.getElementById('btn-all').style.display   = isPerso ? '' : 'none';
+        document.getElementById('tab-all').style.display   = isPerso ? '' : 'none';
+    }
+
+    function logout() {
+        currentUserNom = ''; currentUserPrenom = ''; currentUserType = '';
+        document.getElementById('app-content').style.display = 'none';
+        document.getElementById('login-screen').style.display = 'flex';
+        document.getElementById('access-nom').value = '';
+        document.getElementById('access-mdp').value = '';
+    }
+
+    // =============================================
+    // RENDER
+    // =============================================
     function render() {
         const nomRaw = document.getElementById('nom').value.toUpperCase();
         let prenomRaw = document.getElementById('prenom').value;
         prenomRaw = prenomRaw.charAt(0).toUpperCase() + prenomRaw.slice(1).toLowerCase();
-
         const full = (nomRaw + " " + prenomRaw).trim() || "NOM Prénom";
         const outName = document.getElementById('out-full-name');
         outName.innerText = full;
-
         let size = 34;
-        if(full.length > 25) size = 20;
-        else if(full.length > 18) size = 26;
+        if(full.length > 25) size = 20; else if(full.length > 18) size = 26;
         outName.style.fontSize = size + "px";
 
         const dob = document.getElementById('dob').value;
         if(dob) document.getElementById('out-age').innerText = Math.floor((new Date() - new Date(dob)) / 31557600000);
         const genre = document.getElementById('genre').value;
-if(genre === "Fille") {
-    document.getElementById('out-genre-etudiant').innerText = "Étudiante";
-} else {
-    document.getElementById('out-genre-etudiant').innerText = "Étudiant";
-}
+        document.getElementById('out-genre-etudiant').innerText = (genre === 'Fille') ? 'Étudiante' : 'Étudiant';
 
         const dip = document.getElementById('diplome_select').value;
         document.getElementById('out-dip-label').innerText = dip;
         document.querySelectorAll('.dyn-dip-name').forEach(e => e.innerText = dip);
         document.getElementById('out-dip-year').innerText = db.years[dip];
 
-        document.getElementById('out-tel').innerText = document.getElementById('tel').value || "06 00 00 00 00";
-        document.getElementById('out-email').innerText = document.getElementById('email').value || "email@etudiant.fr";
-        document.getElementById('out-ville').innerText = document.getElementById('ville').value || "Marseille";
+        document.getElementById('out-tel').innerText    = document.getElementById('tel').value    || "06 00 00 00 00";
+        document.getElementById('out-email').innerText  = document.getElementById('email').value  || "email@etudiant.fr";
+        document.getElementById('out-ville').innerText  = document.getElementById('ville').value  || "Marseille";
         document.getElementById('out-linkedin').innerText = document.getElementById('linkedin').value || "LinkedIn";
-        document.getElementById('out-car').innerText = "Véhiculé(e) : " + document.getElementById('vehicule').value;
+        document.getElementById('out-car').innerText    = "Véhiculé(e) : " + document.getElementById('vehicule').value;
 
-        sync('soft', 'out-soft', 'soft_extra');
-        sync('hard', 'out-hard', 'hard_extra');
-        sync('hobby', 'out-hobbies', 'hobby_extra');
+        syncSkills('soft',  'out-soft',    'soft_extra1',  'soft_extra2',  'soft_extra3');
+        syncSkills('hard',  'out-hard',    'hard_extra1',  'hard_extra2',  'hard_extra3');
+        syncSkills('hobby', 'out-hobbies', 'hobby_extra1', 'hobby_extra2', 'hobby_extra3');
 
-        const outInfo = document.getElementById('out-info'); outInfo.innerHTML = "";
-        if(document.getElementById('check-office').checked) outInfo.innerHTML += "<li>Pack Office</li>";
-        const log = document.getElementById('logiciels').value;
-        if(log) outInfo.innerHTML += "<li>Logiciels : " + log + "</li>";
-        const ext = document.getElementById('info_extra').value;
-        if(ext) outInfo.innerHTML += "<li>Autre : " + ext + "</li>";
+        const outInfo = document.getElementById('out-info'); outInfo.innerHTML = '';
+        if(document.getElementById('check-office').checked) outInfo.innerHTML += '<li>Pack Office</li>';
+        ['info_extra1','info_extra2','info_extra3'].forEach(id => { const v = document.getElementById(id).value; if(v) outInfo.innerHTML += `<li>${v}</li>`; });
 
-        const outLangs = document.getElementById('out-langs'); outLangs.innerHTML = "";
+        const outLangs = document.getElementById('out-langs'); outLangs.innerHTML = '';
         Array.from(document.getElementById('lang-inputs').children).forEach(b => {
             const nameIn = b.querySelector('input').value;
             const lvlSel = b.querySelector('select').value;
-            if(nameIn) outLangs.innerHTML += "<li>" + nameIn + " (" + lvlSel + ")</li>";
+            if(nameIn) outLangs.innerHTML += `<li>${nameIn} (${lvlSel})</li>`;
         });
 
         renderBlocks('edu-inputs', 'out-edu-list', false);
         renderBlocks('exp-inputs', 'out-exp-list', true);
 
         if(fitTimer) clearTimeout(fitTimer);
-        fitTimer = setTimeout(fitToPage, 80);
+        fitTimer = setTimeout(fitToPage, 120);
+    }
+
+    function syncSkills(name, outId, ...freeIds) {
+        const out = document.getElementById(outId); out.innerHTML = '';
+        document.querySelectorAll(`input[name="${name}"]:checked`).forEach(c => out.innerHTML += `<li>${c.value}</li>`);
+        freeIds.forEach(fid => { const el = document.getElementById(fid); if(el && el.value) out.innerHTML += `<li>${el.value}</li>`; });
     }
 
     function genChecks(id, list, name, limit) {
         const box = document.getElementById(id);
-        list.forEach(i => {
-            box.innerHTML += `<div><input type="checkbox" name="${name}" value="${i}" onchange="checkLim(this, ${limit})"> ${i}</div>`;
-        });
+        list.forEach(i => { box.innerHTML += `<div><input type="checkbox" name="${name}" value="${i}" onchange="checkLim(this,${limit})"> ${i}</div>`; });
     }
 
     function checkLim(el, limit) {
@@ -454,111 +470,91 @@ if(genre === "Fille") {
         render();
     }
 
+    function renderBlocks(inId, outId, isExp) {
+        const list = document.getElementById(outId); list.innerHTML = '';
+        Array.from(document.getElementById(inId).children).forEach(b => {
+            const fields = b.querySelectorAll('.block-field');
+            if(!fields[0]) return;
+            let missions = '';
+            if(isExp) {
+                b.querySelectorAll('.missions-list .mission-row input').forEach(inp => { if(inp.value) missions += `<li>${inp.value}</li>`; });
+            }
+            list.innerHTML += `<div class="cv-block"><div class="cv-title">${fields[0].value} <span>${fields[2].value}</span></div><div class="cv-sub">${fields[1].value}</div>${missions ? `<ul>${missions}</ul>` : ''}</div>`;
+        });
+    }
+
+    // =============================================
+    // FORM BLOCKS
+    // =============================================
     function addExp() {
         if(expCt >= 4) return; expCt++;
         const div = document.createElement('div'); div.className = 'dynamic-block';
-        div.innerHTML = `<input type="text" placeholder="Poste" oninput="render()"><input type="text" placeholder="Entreprise" oninput="render()" style="margin:5px 0"><input type="text" placeholder="Année" oninput="render()">
-            <div class="mission-row"><input type="text" placeholder="Mission 1" oninput="render()"></div><div class="mission-row"><input type="text" placeholder="Mission 2" oninput="render()"></div><div class="mission-row"><input type="text" placeholder="Mission 3" oninput="render()"></div>`;
+        div.innerHTML = `
+            <input type="text" class="block-field" placeholder="Poste" oninput="render()">
+            <input type="text" class="block-field" placeholder="Entreprise" oninput="render()" style="margin:4px 0">
+            <input type="text" class="block-field" placeholder="Année" oninput="render()">
+            <div class="missions-list">
+                <div class="mission-row"><input type="text" placeholder="Mission 1" oninput="render()"></div>
+                <div class="mission-row"><input type="text" placeholder="Mission 2" oninput="render()"></div>
+                <div class="mission-row"><input type="text" placeholder="Mission 3" oninput="render()"></div>
+            </div>
+            <button class="btn-add-mission" onclick="addMission(this)">+ Ajouter mission (max 8)</button>`;
         document.getElementById('exp-inputs').appendChild(div);
+    }
+
+    function addMission(btn) {
+        const mList = btn.previousElementSibling;
+        if(mList.children.length >= 8) return;
+        const n = mList.children.length + 1;
+        const div = document.createElement('div'); div.className = 'mission-row';
+        div.innerHTML = `<input type="text" placeholder="Mission ${n}" oninput="render()">`;
+        mList.appendChild(div);
+        if(mList.children.length >= 8) { btn.disabled = true; btn.textContent = '✓ Max 8 missions atteint'; }
+        render();
     }
 
     function addEdu() {
         if(eduCt >= 2) return; eduCt++;
         const div = document.createElement('div'); div.className = 'dynamic-block';
-        div.innerHTML = `<input type="text" placeholder="Diplôme" oninput="render()"><input type="text" placeholder="Lieu" oninput="render()" style="margin:5px 0"><input type="text" placeholder="Année" oninput="render()">`;
+        div.innerHTML = `<input type="text" class="block-field" placeholder="Diplôme" oninput="render()"><input type="text" class="block-field" placeholder="Lieu" oninput="render()" style="margin:4px 0"><input type="text" class="block-field" placeholder="Année" oninput="render()">`;
         document.getElementById('edu-inputs').appendChild(div);
     }
 
     function addLang() {
         const div = document.createElement('div'); div.className = 'dynamic-block';
-        let html = `<input type="text" placeholder="Langue" oninput="render()"><select onchange="render()" style="margin-top:5px">`;
+        let html = `<input type="text" placeholder="Langue" oninput="render()"><select onchange="render()" style="margin-top:4px">`;
         for(let k in db.levels) html += `<option value="${k}">${db.levels[k]}</option>`;
         html += `</select>`;
         div.innerHTML = html;
         document.getElementById('lang-inputs').appendChild(div);
     }
 
-    function renderBlocks(inId, outId, isExp) {
-        const list = document.getElementById(outId); list.innerHTML = "";
-        Array.from(document.getElementById(inId).children).forEach(b => {
-            const ins = b.querySelectorAll('input');
-            let m = ""; if(isExp) { [3,4,5].forEach(i => { if(ins[i].value) m += `<li>${ins[i].value}</li>`; }); }
-            list.innerHTML += `<div class="cv-block"><div class="cv-title">${ins[0].value} <span>${ins[2].value}</span></div><div class="cv-sub">${ins[1].value}</div>${m ? `<ul>${m}</ul>` : ""}</div>`;
-        });
-    }
-
-    function sync(name, outId, freeId = null) {
-        const out = document.getElementById(outId); out.innerHTML = "";
-        document.querySelectorAll(`input[name="${name}"]:checked`).forEach(c => out.innerHTML += `<li>${c.value}</li>`);
-        if(freeId) { const v = document.getElementById(freeId).value; if(v) out.innerHTML += `<li>${v}</li>`; }
-    }
-
     function uploadImage(i) {
-        if (i.files && i.files[0]) {
-            const r = new FileReader(); r.onload = e => {
-                document.getElementById('cv-img').src = e.target.result;
-                fitToPage();
-            };
+        if(i.files && i.files[0]) {
+            const r = new FileReader();
+            r.onload = e => { document.getElementById('cv-img').src = e.target.result; fitToPage(); };
             r.readAsDataURL(i.files[0]);
         }
     }
 
-    function finalValidation() {
-        if(!document.getElementById('linkedin').value) return alert("LinkedIn obligatoire.");
-        if(currentUserCode) {
-            const data = collectData();
-            const id = Date.now().toString();
-            const savedAt = new Date().toLocaleDateString('fr-FR');
-            const nom = ((data.nom || '') + ' ' + (data.prenom || '')).trim() || 'Sans nom';
-            const list = getSavedList('final');
-            list.unshift({ id, savedAt, nom, diplome: data.diplome, data });
-            setSavedList('final', list);
-            syncToDrive('final', list);
-        }
-        window.print();
-    }
-
     // =============================================
-    // HISTORIQUE & STOCKAGE
+    // COLLECTE & RESTAURATION
     // =============================================
-
-    function getStorageKey(type) {
-        return 'hecg_' + type + '_' + currentUserCode;
-    }
-
-    function getSavedList(type) {
-        try { return JSON.parse(localStorage.getItem(getStorageKey(type)) || '[]'); }
-        catch(e) { return []; }
-    }
-
-    function setSavedList(type, list) {
-        try {
-            localStorage.setItem(getStorageKey(type), JSON.stringify(list));
-        } catch(e) {
-            try {
-                const nophoto = list.map(item => ({...item, data: {...item.data, photo: ''}}));
-                localStorage.setItem(getStorageKey(type), JSON.stringify(nophoto));
-            } catch(e2) {
-                alert('Espace de stockage insuffisant. Supprimez des anciennes entrées dans "Mes CV".');
-            }
-        }
-    }
-
     function collectData() {
-        const softChecks = [...document.querySelectorAll('input[name="soft"]:checked')].map(c => c.value);
-        const hardChecks = [...document.querySelectorAll('input[name="hard"]:checked')].map(c => c.value);
-        const hobbyChecks = [...document.querySelectorAll('input[name="hobby"]:checked')].map(c => c.value);
+        const get = id => document.getElementById(id).value;
+        const checks = name => [...document.querySelectorAll(`input[name="${name}"]:checked`)].map(c => c.value);
 
         const eduBlocks = [];
         Array.from(document.getElementById('edu-inputs').children).forEach(b => {
-            const ins = b.querySelectorAll('input');
-            eduBlocks.push({ diplome: ins[0].value, lieu: ins[1].value, annee: ins[2].value });
+            const f = b.querySelectorAll('.block-field');
+            eduBlocks.push({ diplome: f[0]?.value||'', lieu: f[1]?.value||'', annee: f[2]?.value||'' });
         });
 
         const expBlocks = [];
         Array.from(document.getElementById('exp-inputs').children).forEach(b => {
-            const ins = b.querySelectorAll('input');
-            expBlocks.push({ poste: ins[0].value, entreprise: ins[1].value, annee: ins[2].value, m1: ins[3]?.value||'', m2: ins[4]?.value||'', m3: ins[5]?.value||'' });
+            const f = b.querySelectorAll('.block-field');
+            const missions = Array.from(b.querySelectorAll('.missions-list .mission-row input')).map(i => i.value);
+            expBlocks.push({ poste: f[0]?.value||'', entreprise: f[1]?.value||'', annee: f[2]?.value||'', missions });
         });
 
         const langBlocks = [];
@@ -568,228 +564,141 @@ if(genre === "Fille") {
 
         const imgSrc = document.getElementById('cv-img').src;
         return {
-            nom: document.getElementById('nom').value,
-            prenom: document.getElementById('prenom').value,
-            genre: document.getElementById('genre').value,
-            dob: document.getElementById('dob').value,
-            linkedin: document.getElementById('linkedin').value,
-            tel: document.getElementById('tel').value,
-            email: document.getElementById('email').value,
-            ville: document.getElementById('ville').value,
-            vehicule: document.getElementById('vehicule').value,
-            diplome: document.getElementById('diplome_select').value,
-            soft_extra: document.getElementById('soft_extra').value,
-            hard_extra: document.getElementById('hard_extra').value,
-            info_extra: document.getElementById('info_extra').value,
-            logiciels: document.getElementById('logiciels').value,
-            hobby_extra: document.getElementById('hobby_extra').value,
+            nom: get('nom'), prenom: get('prenom'), genre: get('genre'), dob: get('dob'),
+            linkedin: get('linkedin'), tel: get('tel'), email: get('email'), ville: get('ville'),
+            vehicule: get('vehicule'), diplome: get('diplome_select'),
+            soft_extra1: get('soft_extra1'), soft_extra2: get('soft_extra2'), soft_extra3: get('soft_extra3'),
+            hard_extra1: get('hard_extra1'), hard_extra2: get('hard_extra2'), hard_extra3: get('hard_extra3'),
+            info_extra1: get('info_extra1'), info_extra2: get('info_extra2'), info_extra3: get('info_extra3'),
+            hobby_extra1: get('hobby_extra1'), hobby_extra2: get('hobby_extra2'), hobby_extra3: get('hobby_extra3'),
             check_office: document.getElementById('check-office').checked,
-            soft_checks: softChecks,
-            hard_checks: hardChecks,
-            hobby_checks: hobbyChecks,
-            edu_blocks: eduBlocks,
-            exp_blocks: expBlocks,
-            lang_blocks: langBlocks,
+            soft_checks: checks('soft'), hard_checks: checks('hard'), hobby_checks: checks('hobby'),
+            edu_blocks: eduBlocks, exp_blocks: expBlocks, lang_blocks: langBlocks,
             photo: imgSrc.startsWith('data:') ? imgSrc : ''
         };
     }
 
     function restoreData(data) {
-        document.getElementById('nom').value = data.nom || '';
-        document.getElementById('prenom').value = data.prenom || '';
-        document.getElementById('genre').value = data.genre || 'Garçon';
-        document.getElementById('dob').value = data.dob || '';
-        document.getElementById('linkedin').value = data.linkedin || '';
-        document.getElementById('tel').value = data.tel || '';
-        document.getElementById('email').value = data.email || '';
-        document.getElementById('ville').value = data.ville || '';
+        const set = (id, v) => { const el = document.getElementById(id); if(el) el.value = v || ''; };
+        set('nom', data.nom); set('prenom', data.prenom);
+        document.getElementById('genre').value    = data.genre    || 'Garçon';
+        set('dob', data.dob); set('linkedin', data.linkedin); set('tel', data.tel);
+        set('email', data.email); set('ville', data.ville);
         document.getElementById('vehicule').value = data.vehicule || 'Oui';
         document.getElementById('diplome_select').value = data.diplome || 'BTS GPME 1';
-        document.getElementById('soft_extra').value = data.soft_extra || '';
-        document.getElementById('hard_extra').value = data.hard_extra || '';
-        document.getElementById('info_extra').value = data.info_extra || '';
-        document.getElementById('logiciels').value = data.logiciels || '';
-        document.getElementById('hobby_extra').value = data.hobby_extra || '';
+
+        // Support ancien format (soft_extra) et nouveau (soft_extra1/2/3)
+        set('soft_extra1',  data.soft_extra1  || data.soft_extra  || '');
+        set('soft_extra2',  data.soft_extra2  || '');
+        set('soft_extra3',  data.soft_extra3  || '');
+        set('hard_extra1',  data.hard_extra1  || data.hard_extra  || '');
+        set('hard_extra2',  data.hard_extra2  || '');
+        set('hard_extra3',  data.hard_extra3  || '');
+        set('info_extra1',  data.info_extra1  || data.logiciels   || data.info_extra || '');
+        set('info_extra2',  data.info_extra2  || '');
+        set('info_extra3',  data.info_extra3  || '');
+        set('hobby_extra1', data.hobby_extra1 || data.hobby_extra || '');
+        set('hobby_extra2', data.hobby_extra2 || '');
+        set('hobby_extra3', data.hobby_extra3 || '');
         document.getElementById('check-office').checked = data.check_office !== false;
 
-        document.querySelectorAll('input[name="soft"], input[name="hard"], input[name="hobby"]').forEach(c => c.checked = false);
-        (data.soft_checks || []).forEach(v => { const el = document.querySelector(`input[name="soft"][value="${v}"]`); if(el) el.checked = true; });
-        (data.hard_checks || []).forEach(v => { const el = document.querySelector(`input[name="hard"][value="${v}"]`); if(el) el.checked = true; });
+        document.querySelectorAll('input[name="soft"],input[name="hard"],input[name="hobby"]').forEach(c => c.checked = false);
+        (data.soft_checks  || []).forEach(v => { const el = document.querySelector(`input[name="soft"][value="${v}"]`);  if(el) el.checked = true; });
+        (data.hard_checks  || []).forEach(v => { const el = document.querySelector(`input[name="hard"][value="${v}"]`);  if(el) el.checked = true; });
         (data.hobby_checks || []).forEach(v => { const el = document.querySelector(`input[name="hobby"][value="${v}"]`); if(el) el.checked = true; });
 
-        document.getElementById('edu-inputs').innerHTML = '';
-        eduCt = 0;
+        document.getElementById('edu-inputs').innerHTML = ''; eduCt = 0;
         (data.edu_blocks || []).forEach(b => {
             addEdu();
             const block = document.getElementById('edu-inputs').lastElementChild;
-            const ins = block.querySelectorAll('input');
-            ins[0].value = b.diplome || '';
-            ins[1].value = b.lieu || '';
-            ins[2].value = b.annee || '';
+            const f = block.querySelectorAll('.block-field');
+            f[0].value = b.diplome||''; f[1].value = b.lieu||''; f[2].value = b.annee||'';
         });
 
-        document.getElementById('exp-inputs').innerHTML = '';
-        expCt = 0;
+        document.getElementById('exp-inputs').innerHTML = ''; expCt = 0;
         (data.exp_blocks || []).forEach(b => {
             addExp();
             const block = document.getElementById('exp-inputs').lastElementChild;
-            const ins = block.querySelectorAll('input');
-            ins[0].value = b.poste || '';
-            ins[1].value = b.entreprise || '';
-            ins[2].value = b.annee || '';
-            if(ins[3]) ins[3].value = b.m1 || '';
-            if(ins[4]) ins[4].value = b.m2 || '';
-            if(ins[5]) ins[5].value = b.m3 || '';
+            const f = block.querySelectorAll('.block-field');
+            f[0].value = b.poste||''; f[1].value = b.entreprise||''; f[2].value = b.annee||'';
+            // Support ancien format (m1/m2/m3) et nouveau (missions[])
+            const missions = b.missions || [b.m1, b.m2, b.m3, b.m4, b.m5].filter(Boolean);
+            const mList = block.querySelector('.missions-list');
+            const addBtn = block.querySelector('.btn-add-mission');
+            while(mList.children.length < Math.min(missions.length, 8)) {
+                const div = document.createElement('div'); div.className = 'mission-row';
+                div.innerHTML = `<input type="text" placeholder="Mission ${mList.children.length+1}" oninput="render()">`;
+                mList.appendChild(div);
+            }
+            missions.forEach((m, i) => { if(mList.children[i]) mList.children[i].querySelector('input').value = m||''; });
+            if(mList.children.length >= 8 && addBtn) { addBtn.disabled = true; addBtn.textContent = '✓ Max 8 missions atteint'; }
         });
 
         document.getElementById('lang-inputs').innerHTML = '';
         (data.lang_blocks || []).forEach(b => {
             addLang();
             const block = document.getElementById('lang-inputs').lastElementChild;
-            block.querySelector('input').value = b.langue || '';
+            block.querySelector('input').value  = b.langue || '';
             block.querySelector('select').value = b.niveau || 'A1';
         });
 
-        if(data.photo && data.photo.startsWith('data:')) {
-            document.getElementById('cv-img').src = data.photo;
-        } else {
-            document.getElementById('cv-img').src = 'https://via.placeholder.com/150?text=PHOTO';
-        }
-
+        document.getElementById('cv-img').src = (data.photo && data.photo.startsWith('data:')) ? data.photo : 'https://via.placeholder.com/150?text=PHOTO';
         render();
     }
 
     // =============================================
-    // SYNCHRONISATION GOOGLE DRIVE
+    // VALIDATION & IMPRESSION
     // =============================================
+    async function finalValidation() {
+        if(!document.getElementById('linkedin').value) return alert("LinkedIn obligatoire pour générer le CV.");
 
-    function setSyncStatus(msg, cls) {
-        const el = document.getElementById('sync-status');
-        if (!el) return;
-        el.textContent = msg;
-        el.className = cls || 'sync-info';
-    }
+        // Forcer l'ajustement AVANT impression
+        fitToPage();
+        await new Promise(r => setTimeout(r, 300));
 
-    async function syncToDrive(type, list) {
-        const light = list.map(item => ({
-            ...item,
-            data: item.data ? { ...item.data, photo: '' } : item.data
-        }));
-        try {
-            setSyncStatus('☁ Synchronisation Drive…', 'sync-info');
-            await fetch(apiUrl, {
-                method: 'POST',
-                headers: { 'Content-Type': 'text/plain' },
-                body: JSON.stringify({ code: currentUserCode, action: 'save', type, list: light }),
-                mode: 'no-cors'
-            });
-            setSyncStatus('☁ Sauvegardé sur Drive (' + new Date().toLocaleTimeString('fr-FR', {hour:'2-digit',minute:'2-digit'}) + ')', 'sync-ok');
-        } catch(e) {
-            setSyncStatus('⚠ Sync Drive échouée (données locales OK)', 'sync-err');
-        }
-    }
-
-    async function loadFromDrive(code) {
-        try {
-            setSyncStatus('☁ Restauration depuis Drive…', 'sync-info');
-            const base = apiUrl + '?code=' + encodeURIComponent(code);
-            const [dRes, fRes] = await Promise.all([
-                fetch(base + '&action=load&type=drafts'),
-                fetch(base + '&action=load&type=final')
-            ]);
-            const dData = await dRes.json();
-            const fData = await fRes.json();
-
-            let nD = 0, nF = 0;
-            if (dData.ok && Array.isArray(dData.list) && dData.list.length > 0) {
-                const local = getSavedList('drafts');
-                if (dData.list.length >= local.length) { setSavedList('drafts', dData.list); nD = dData.list.length; }
-                else nD = local.length;
-            }
-            if (fData.ok && Array.isArray(fData.list) && fData.list.length > 0) {
-                const local = getSavedList('final');
-                if (fData.list.length >= local.length) { setSavedList('final', fData.list); nF = fData.list.length; }
-                else nF = local.length;
-            }
-            const msg = nD + ' brouillon(s) · ' + nF + ' CV finalisé(s) disponible(s)';
-            setSyncStatus('✅ Drive synchronisé — ' + msg, 'sync-ok');
-        } catch(e) {
-            setSyncStatus('⚠ Drive inaccessible — données locales uniquement', 'sync-err');
-        }
-    }
-
-    function saveDraft() {
-        if(!currentUserCode) return;
-        const data = collectData();
-        const id = Date.now().toString();
-        const savedAt = new Date().toLocaleDateString('fr-FR');
-        const nom = ((data.nom || '') + ' ' + (data.prenom || '')).trim() || 'Sans nom';
-
-        const list = getSavedList('drafts');
-        list.unshift({ id, savedAt, nom, diplome: data.diplome, data });
-        setSavedList('drafts', list);
-        syncToDrive('drafts', list);
-
-        const btn = document.getElementById('btn-draft');
-        const orig = btn.innerText;
-        btn.innerText = '✓ Sauvegardé !';
-        btn.style.background = '#28a745';
-        setTimeout(() => { btn.innerText = orig; btn.style.background = ''; }, 2200);
-    }
-
-    function showHistory() {
-        document.getElementById('history-modal').style.display = 'flex';
-        showTab('drafts');
-    }
-
-    function closeHistory() {
-        document.getElementById('history-modal').style.display = 'none';
-    }
-
-    function showTab(tab) {
-        document.getElementById('tab-drafts').className = 'history-tab' + (tab === 'drafts' ? ' active' : '');
-        document.getElementById('tab-final').className = 'history-tab' + (tab === 'final' ? ' active' : '');
-
-        const list = getSavedList(tab);
-        const container = document.getElementById('history-list');
-
-        if(list.length === 0) {
-            container.innerHTML = '<p class="history-empty">Aucun CV enregistré.</p>';
-            return;
+        // Vérifier débordement résiduel
+        const ov = getPageOverflow();
+        if(ov > 8) {
+            const cont = confirm(
+                `⚠️ ALERTE MISE EN PAGE\n\n` +
+                `Le CV dépasse la page de ${Math.round(ov)}px après compression maximale.\n` +
+                `Le PDF risque d'être sur 2 pages.\n\n` +
+                `Conseil : réduisez le contenu (missions, compétences, langues).\n\n` +
+                `Imprimer quand même ?`
+            );
+            if(!cont) return;
         }
 
-        container.innerHTML = list.map(item => `
-            <div class="history-item">
-                <div>
-                    <div class="history-name">${item.nom}</div>
-                    <div class="history-meta">${item.diplome} &mdash; ${item.savedAt}</div>
-                </div>
-                <div class="history-actions">
-                    <button class="btn-load" onclick="loadCV('${tab}', '${item.id}')">Charger</button>
-                    <button class="btn-del" onclick="deleteCV('${tab}', '${item.id}')">✕</button>
-                </div>
-            </div>
-        `).join('');
-    }
-
-    function loadCV(type, id) {
-        const item = getSavedList(type).find(i => i.id === id);
-        if(item) {
-            restoreData(item.data);
-            closeHistory();
-            document.getElementById('form-side').scrollTop = 0;
+        // Sauvegarder si compte autorisé
+        if(currentUserType && currentUserType !== 'EtudiantHECG') {
+            const data = collectData();
+            const id = Date.now().toString();
+            const savedAt = new Date().toLocaleDateString('fr-FR');
+            const nomEtu  = ((data.nom||'') + ' ' + (data.prenom||'')).trim() || 'Sans nom';
+            const list = getSavedList('final');
+            list.unshift({ id, savedAt, nom: nomEtu, diplome: data.diplome, savedBy: currentUserNom, data });
+            setSavedList('final', list);
+            syncToDrive('final', list);
         }
-    }
-
-    function deleteCV(type, id) {
-        if(!confirm('Supprimer ce CV ?')) return;
-        setSavedList(type, getSavedList(type).filter(i => i.id !== id));
-        showTab(type);
+        window.print();
     }
 
     // =============================================
-    // AJUSTEMENT AUTOMATIQUE À LA PAGE
+    // AJUSTEMENT 1 PAGE
     // =============================================
+    function getPageOverflow() {
+        const page = document.getElementById('cv-page');
+        if(!page) return 0;
+        const cl = page.querySelector('.col-left');
+        const cr = page.querySelector('.col-right');
+        if(!cl || !cr) return 0;
+        const pageBottom = page.getBoundingClientRect().bottom;
+        // Inclure le footer dans le calcul côté gauche
+        const footer = cl.querySelector('.footer-cv');
+        const leftBottom = footer ? footer.getBoundingClientRect().bottom : cl.getBoundingClientRect().bottom;
+        return Math.max(leftBottom, cr.getBoundingClientRect().bottom) - pageBottom;
+    }
+
     function fitToPage() {
         const page = document.getElementById('cv-page');
         if(!page) return;
@@ -798,53 +707,233 @@ if(genre === "Fille") {
         let bMb = 15, liMb = 3, ulM = 4, sMb = 12, sMt = 25, cGap = 5;
 
         function apply() {
-            root.style.setProperty('--adj-block-mb', bMb + 'px');
-            root.style.setProperty('--adj-li-mb', liMb + 'px');
-            root.style.setProperty('--adj-ul-m', ulM + 'px');
-            root.style.setProperty('--adj-section-mb', sMb + 'px');
-            root.style.setProperty('--adj-section-mt', sMt + 'px');
+            root.style.setProperty('--adj-block-mb',    bMb  + 'px');
+            root.style.setProperty('--adj-li-mb',       liMb + 'px');
+            root.style.setProperty('--adj-ul-m',        ulM  + 'px');
+            root.style.setProperty('--adj-section-mb',  sMb  + 'px');
+            root.style.setProperty('--adj-section-mt',  sMt  + 'px');
             root.style.setProperty('--adj-contact-gap', cGap + 'px');
         }
 
-        function getOv() {
-            const pr = page.getBoundingClientRect();
-            const cl = page.querySelector('.col-left');
-            const cr = page.querySelector('.col-right');
-            if(!cl || !cr) return 0;
-            return Math.max(cl.getBoundingClientRect().bottom, cr.getBoundingClientRect().bottom) - pr.bottom;
-        }
-
         apply();
-        const ov = getOv();
+        let ov = getPageOverflow();
 
-        if(ov > 3) {
-            for(let i = 0; i < 90; i++) {
-                if(getOv() <= 3) break;
-                if(sMt > 10)       sMt  = Math.max(10,  sMt  - 1);
-                else if(cGap > 2)  cGap = Math.max(2,   cGap - 0.5);
-                else if(ulM > 1)   ulM  = Math.max(1,   ulM  - 0.5);
-                else if(liMb > 1)  liMb = Math.max(1,   liMb - 0.25);
-                else if(sMb > 4)   sMb  = Math.max(4,   sMb  - 0.5);
-                else if(bMb > 3)   bMb  = Math.max(3,   bMb  - 0.5);
+        if(ov > 2) {
+            for(let i = 0; i < 150; i++) {
+                if(getPageOverflow() <= 2) break;
+                if(sMt > 5)        sMt  = Math.max(5,    sMt  - 1);
+                else if(cGap > 1)  cGap = Math.max(1,    cGap - 0.5);
+                else if(ulM > 0)   ulM  = Math.max(0,    ulM  - 0.5);
+                else if(liMb > 0.5) liMb = Math.max(0.5, liMb - 0.25);
+                else if(sMb > 2)   sMb  = Math.max(2,    sMb  - 0.5);
+                else if(bMb > 2)   bMb  = Math.max(2,    bMb  - 0.5);
                 else break;
                 apply();
+            }
+            // Afficher alerte si toujours en débordement
+            const residuel = getPageOverflow();
+            const alertEl = document.getElementById('page-alert');
+            if(residuel > 8) {
+                alertEl.style.display = 'block';
+                setTimeout(() => { alertEl.style.display = 'none'; }, 4000);
             }
         } else if(ov < -55) {
             for(let i = 0; i < 50; i++) {
-                if(getOv() > -15) break;
+                if(getPageOverflow() > -15) break;
                 const prev = [bMb, liMb, ulM, sMb, sMt, cGap];
-                if(bMb < 20)      bMb  = Math.min(20,  bMb  + 0.5);
-                else if(liMb < 5) liMb = Math.min(5,   liMb + 0.25);
-                else if(ulM < 8)  ulM  = Math.min(8,   ulM  + 0.5);
-                else if(sMt < 32) sMt  = Math.min(32,  sMt  + 1);
+                if(bMb < 20)      bMb  = Math.min(20, bMb  + 0.5);
+                else if(liMb < 5) liMb = Math.min(5,  liMb + 0.25);
+                else if(ulM < 8)  ulM  = Math.min(8,  ulM  + 0.5);
+                else if(sMt < 32) sMt  = Math.min(32, sMt  + 1);
                 else break;
                 apply();
-                if(getOv() > 3) {
-                    [bMb, liMb, ulM, sMb, sMt, cGap] = prev;
-                    apply();
-                    break;
-                }
+                if(getPageOverflow() > 3) { [bMb, liMb, ulM, sMb, sMt, cGap] = prev; apply(); break; }
             }
+        }
+    }
+
+    // =============================================
+    // HISTORIQUE (local)
+    // =============================================
+    function getStorageKey(type) { return `hecg_${type}_${currentUserNom}`; }
+    function getSavedList(type) { try { return JSON.parse(localStorage.getItem(getStorageKey(type)) || '[]'); } catch(e) { return []; } }
+    function setSavedList(type, list) {
+        try { localStorage.setItem(getStorageKey(type), JSON.stringify(list)); }
+        catch(e) {
+            try {
+                const nophoto = list.map(item => ({...item, data:{...item.data, photo:''}}));
+                localStorage.setItem(getStorageKey(type), JSON.stringify(nophoto));
+            } catch(e2) { alert('Stockage insuffisant. Supprimez des entrées dans "Mes CV".'); }
+        }
+    }
+
+    function saveDraft() {
+        if(!currentUserNom || currentUserType === 'EtudiantHECG') return;
+        const data = collectData();
+        const id = Date.now().toString();
+        const savedAt = new Date().toLocaleDateString('fr-FR');
+        const nom = ((data.nom||'') + ' ' + (data.prenom||'')).trim() || 'Sans nom';
+        const list = getSavedList('drafts');
+        list.unshift({ id, savedAt, nom, diplome: data.diplome, savedBy: currentUserNom, data });
+        setSavedList('drafts', list);
+        syncToDrive('drafts', list);
+        const btn = document.getElementById('btn-draft');
+        const orig = btn.innerText;
+        btn.innerText = '✓ Brouillon sauvegardé !'; btn.style.background = '#28a745';
+        setTimeout(() => { btn.innerText = orig; btn.style.background = ''; }, 2200);
+    }
+
+    function showHistory(mode) {
+        allCvsCache = null;
+        document.getElementById('history-modal').style.display = 'flex';
+        document.getElementById('modal-title').textContent = (mode === 'all') ? '📊 Tous les CV étudiants' : '📁 Mes CV enregistrés';
+        document.getElementById('search-bar').style.display = (mode === 'all') ? '' : 'none';
+        if(mode === 'all') {
+            document.getElementById('tab-drafts').style.display = 'none';
+            document.getElementById('tab-final').style.display  = 'none';
+            document.getElementById('tab-all').style.display    = '';
+            showTab('all');
+        } else {
+            document.getElementById('tab-drafts').style.display = '';
+            document.getElementById('tab-final').style.display  = '';
+            document.getElementById('tab-all').style.display    = currentUserType === 'Personnel' ? '' : 'none';
+            showTab('drafts');
+        }
+    }
+
+    function closeHistory() { document.getElementById('history-modal').style.display = 'none'; }
+
+    function showTab(tab) {
+        ['tab-drafts','tab-final','tab-all'].forEach(id => {
+            const el = document.getElementById(id);
+            if(el) el.className = 'modal-tab' + (id === 'tab-' + tab ? ' active' : '');
+        });
+
+        if(tab === 'all') { loadAllCVs(); return; }
+
+        const list = getSavedList(tab);
+        const container = document.getElementById('history-list');
+        if(list.length === 0) { container.innerHTML = '<p class="history-empty">Aucun CV enregistré.</p>'; return; }
+
+        container.innerHTML = list.map(item => `
+            <div class="history-item">
+                <div>
+                    <div class="history-name">${item.nom}</div>
+                    <div class="history-meta">${item.diplome || ''} — ${item.savedAt}${item.savedBy && item.savedBy !== currentUserNom ? ` · par ${item.savedBy}` : ''}</div>
+                </div>
+                <div class="history-actions">
+                    <button class="btn-load" onclick="loadCV('${tab}','${item.id}')">Charger</button>
+                    <button class="btn-del"  onclick="deleteCV('${tab}','${item.id}')">✕</button>
+                </div>
+            </div>`).join('');
+    }
+
+    function loadCV(type, id) {
+        const item = getSavedList(type).find(i => i.id === id);
+        if(item) { restoreData(item.data); closeHistory(); document.getElementById('form-side').scrollTop = 0; }
+    }
+
+    function loadCVFromAll(studentNom, id) {
+        if(!allCvsCache) return;
+        const entry = allCvsCache.find(e => e.student === studentNom);
+        if(!entry) return;
+        const item = (entry.cvs || []).find(c => c.id === id);
+        if(item) { restoreData(item.data); closeHistory(); document.getElementById('form-side').scrollTop = 0; }
+    }
+
+    function deleteCV(type, id) {
+        if(!confirm('Supprimer ce CV ?')) return;
+        setSavedList(type, getSavedList(type).filter(i => i.id !== id));
+        showTab(type);
+    }
+
+    function filterHistory() {
+        const q = document.getElementById('search-input').value.toLowerCase();
+        if(!allCvsCache) return;
+        renderAllCVs(allCvsCache.filter(e => e.student.toLowerCase().includes(q)));
+    }
+
+    async function loadAllCVs() {
+        const container = document.getElementById('history-list');
+        container.innerHTML = '<p class="history-empty">☁ Chargement…</p>';
+        try {
+            const res  = await fetch(apiUrl + `?action=list_all&type=final&nom=${encodeURIComponent(currentUserNom)}`);
+            const data = await res.json();
+            if(data.ok && data.all) {
+                allCvsCache = data.all;
+                renderAllCVs(data.all);
+            } else {
+                container.innerHTML = '<p class="history-empty">Aucun CV trouvé sur Drive.</p>';
+            }
+        } catch(e) {
+            container.innerHTML = '<p class="history-empty">⚠ Erreur de chargement Drive.</p>';
+        }
+    }
+
+    function renderAllCVs(entries) {
+        const container = document.getElementById('history-list');
+        if(!entries || entries.length === 0) { container.innerHTML = '<p class="history-empty">Aucun résultat.</p>'; return; }
+        container.innerHTML = entries.map(entry => {
+            const cvRows = (entry.cvs || []).map(cv => `
+                <div class="history-item" style="padding-left:30px">
+                    <div>
+                        <div class="history-name" style="font-size:0.82rem">${cv.nom}</div>
+                        <div class="history-meta">${cv.diplome||''} — ${cv.savedAt}</div>
+                    </div>
+                    <button class="btn-load" onclick="loadCVFromAll('${entry.student}','${cv.id}')">Charger</button>
+                </div>`).join('');
+            return `<div class="history-group">📋 ${entry.student} (${(entry.cvs||[]).length} CV)</div>${cvRows}`;
+        }).join('');
+    }
+
+    // =============================================
+    // SYNCHRONISATION GOOGLE DRIVE
+    // =============================================
+    function setSyncStatus(msg, cls) {
+        const el = document.getElementById('sync-status');
+        if(!el) return;
+        el.textContent = msg;
+        el.className = cls || 'sync-info';
+    }
+
+    async function syncToDrive(type, list) {
+        const light = list.map(item => ({ ...item, data: item.data ? {...item.data, photo:''} : item.data }));
+        try {
+            setSyncStatus('☁ Synchronisation…', 'sync-info');
+            await fetch(apiUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain' },
+                body: JSON.stringify({ nom: currentUserNom, action: 'save', type, list: light }),
+                mode: 'no-cors'
+            });
+            setSyncStatus('☁ Sauvegardé sur Drive (' + new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'}) + ')', 'sync-ok');
+        } catch(e) {
+            setSyncStatus('⚠ Sync Drive échouée (données locales OK)', 'sync-err');
+        }
+    }
+
+    async function loadFromDrive() {
+        try {
+            setSyncStatus('☁ Restauration depuis Drive…', 'sync-info');
+            const base = apiUrl + `?nom=${encodeURIComponent(currentUserNom)}`;
+            const [dRes, fRes] = await Promise.all([
+                fetch(base + '&action=load&type=drafts'),
+                fetch(base + '&action=load&type=final')
+            ]);
+            const dData = await dRes.json();
+            const fData = await fRes.json();
+            let nD = 0, nF = 0;
+            if(dData.ok && Array.isArray(dData.list) && dData.list.length > 0) {
+                const local = getSavedList('drafts');
+                if(dData.list.length >= local.length) { setSavedList('drafts', dData.list); nD = dData.list.length; } else nD = local.length;
+            }
+            if(fData.ok && Array.isArray(fData.list) && fData.list.length > 0) {
+                const local = getSavedList('final');
+                if(fData.list.length >= local.length) { setSavedList('final', fData.list); nF = fData.list.length; } else nF = local.length;
+            }
+            setSyncStatus(`✅ Drive synchronisé — ${nD} brouillon(s) · ${nF} CV finalisé(s)`, 'sync-ok');
+        } catch(e) {
+            setSyncStatus('⚠ Drive inaccessible — données locales uniquement', 'sync-err');
         }
     }
 </script>
