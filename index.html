@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Générateur de CV HECG</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         :root {
             --hecg-teal: #70a5aa; --hecg-navy: #3f5071; --hecg-dark: #22475d;
@@ -155,6 +156,19 @@
         <button class="btn-hist-action" id="btn-draft" onclick="saveDraft()">💾 Brouillon</button>
         <button class="btn-hist-action" id="btn-hist"  onclick="showHistory('mine')">📋 Mes CV</button>
         <button class="btn-hist-action" id="btn-all"   onclick="showHistory('all')" style="display:none">📊 Tous les CV</button>
+        <button class="btn-hist-action" id="btn-rebuild" onclick="rebuildAllPdfsFromBrowser()" style="display:none;background:#7b5ea7;">🔄 Reconstruire PDFs</button>
+    </div>
+
+    <!-- Overlay reconstruction rétroactive -->
+    <div id="rebuild-overlay" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.65);z-index:99999;align-items:center;justify-content:center;flex-direction:column;gap:18px;">
+        <div style="background:white;padding:32px 40px;border-radius:10px;text-align:center;max-width:420px;box-shadow:0 8px 32px rgba(0,0,0,0.3);">
+            <div style="font-size:1.5rem;margin-bottom:12px;">📄</div>
+            <div style="font-weight:bold;color:#22475d;font-size:1rem;margin-bottom:10px;">Reconstruction des PDFs</div>
+            <div id="rebuild-status" style="font-size:0.85rem;color:#555;min-height:20px;">Initialisation…</div>
+            <div id="rebuild-bar-wrap" style="margin-top:14px;background:#eee;border-radius:6px;height:8px;overflow:hidden;">
+                <div id="rebuild-bar" style="height:8px;background:#70a5aa;width:0%;transition:width 0.4s;"></div>
+            </div>
+        </div>
     </div>
 
     <!-- 1. PROFIL -->
@@ -388,10 +402,11 @@
         const badge = document.getElementById('user-type-badge');
         badge.textContent = isHECG ? 'Démo HECG' : (isPerso ? 'Personnel' : 'Étudiant');
         badge.className   = isPerso ? 'badge-personnel' : 'badge-etudiant';
-        document.getElementById('btn-draft').style.display = isHECG ? 'none' : '';
-        document.getElementById('btn-hist').style.display  = isHECG ? 'none' : '';
-        document.getElementById('btn-all').style.display   = isPerso ? '' : 'none';
-        document.getElementById('tab-all').style.display   = isPerso ? '' : 'none';
+        document.getElementById('btn-draft').style.display   = isHECG  ? 'none' : '';
+        document.getElementById('btn-hist').style.display    = isHECG  ? 'none' : '';
+        document.getElementById('btn-all').style.display     = isPerso ? '' : 'none';
+        document.getElementById('btn-rebuild').style.display = isPerso ? '' : 'none';
+        document.getElementById('tab-all').style.display     = isPerso ? '' : 'none';
     }
 
     function logout() {
@@ -679,6 +694,9 @@
             list.unshift({ id, savedAt, nom: nomEtu, diplome: data.diplome, savedBy: currentUserNom, data });
             setSavedList('final', list);
             syncToDrive('final', list);
+            // Capture le PDF visuel et l'envoie sur Drive
+            setSyncStatus('☁ Capture PDF en cours…', 'sync-info');
+            captureCvPdfBase64().then(b64 => uploadPdfToDrive('final', b64));
         }
         window.print();
     }
@@ -767,7 +785,7 @@
         }
     }
 
-    function saveDraft() {
+    async function saveDraft() {
         if(!currentUserNom || currentUserType === 'EtudiantHECG') return;
         const data = collectData();
         const id = Date.now().toString();
@@ -777,6 +795,8 @@
         list.unshift({ id, savedAt, nom, diplome: data.diplome, savedBy: currentUserNom, data });
         setSavedList('drafts', list);
         syncToDrive('drafts', list);
+        // Capture le PDF visuel et l'envoie sur Drive
+        captureCvPdfBase64().then(b64 => uploadPdfToDrive('drafts', b64));
         const btn = document.getElementById('btn-draft');
         const orig = btn.innerText;
         btn.innerText = '✓ Brouillon sauvegardé !'; btn.style.background = '#28a745';
@@ -910,6 +930,101 @@
         } catch(e) {
             setSyncStatus('⚠ Sync Drive échouée (données locales OK)', 'sync-err');
         }
+    }
+
+    // Capture le CV affiché en PDF (base64) via html2pdf.js
+    async function captureCvPdfBase64() {
+        const el = document.getElementById('cv-page');
+        if(!el || typeof html2pdf === 'undefined') return null;
+        try {
+            const blob = await html2pdf().set({
+                margin: 0,
+                image: { type: 'jpeg', quality: 0.92 },
+                html2canvas: { scale: 2, useCORS: true, logging: false, backgroundColor: '#ffffff' },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            }).from(el).outputPdf('blob');
+            return await new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onloadend = () => resolve(reader.result.split(',')[1]);
+                reader.onerror  = reject;
+                reader.readAsDataURL(blob);
+            });
+        } catch(e) {
+            return null;
+        }
+    }
+
+    // Envoie le PDF visuel (base64) sur Drive dans une requête séparée
+    // targetNom : nom d'utilisateur cible (par défaut : utilisateur connecté)
+    async function uploadPdfToDrive(type, pdfBase64, targetNom) {
+        if(!pdfBase64) return;
+        const nom = targetNom || currentUserNom;
+        try {
+            await fetch(apiUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain' },
+                body: JSON.stringify({ nom, action: 'save_pdf', type, pdfBase64 }),
+                mode: 'no-cors'
+            });
+        } catch(e) { /* silencieux — le JSON est déjà sauvegardé */ }
+    }
+
+    // Reconstruction rétroactive : génère les PDFs visuels pour tous les
+    // CVs existants dans Drive (brouillons + finaux). Personnel uniquement.
+    async function rebuildAllPdfsFromBrowser() {
+        if(currentUserType !== 'Personnel') return;
+
+        const overlay = document.getElementById('rebuild-overlay');
+        const statusEl = document.getElementById('rebuild-status');
+        const bar      = document.getElementById('rebuild-bar');
+        overlay.style.display = 'flex';
+
+        const setStatus = (msg, pct) => {
+            if(statusEl) statusEl.textContent = msg;
+            if(bar && pct !== undefined) bar.style.width = pct + '%';
+        };
+
+        let done = 0, errors = 0, total = 0;
+
+        try {
+            setStatus('Chargement de la liste des CVs…', 0);
+
+            const [dRes, fRes] = await Promise.all([
+                fetch(apiUrl + '?action=list_all&type=drafts'),
+                fetch(apiUrl + '?action=list_all&type=final')
+            ]);
+            const [dData, fData] = await Promise.all([dRes.json(), fRes.json()]);
+
+            const tasks = [];
+            if(dData.ok && dData.all) dData.all.forEach(e => { if(e.cvs && e.cvs[0]) tasks.push({ type:'drafts', student:e.student, cv:e.cvs[0] }); });
+            if(fData.ok && fData.all) fData.all.forEach(e => { if(e.cvs && e.cvs[0]) tasks.push({ type:'final',  student:e.student, cv:e.cvs[0] }); });
+
+            total = tasks.length;
+            if(total === 0) { setStatus('Aucun CV trouvé dans Drive.', 100); setTimeout(()=>{ overlay.style.display='none'; }, 3000); return; }
+
+            setStatus(`0 / ${total} CV traité…`, 0);
+
+            for(const task of tasks) {
+                try {
+                    restoreData(task.cv.data || task.cv);
+                    fitToPage();
+                    await new Promise(r => setTimeout(r, 600));
+                    const b64 = await captureCvPdfBase64();
+                    if(b64) await uploadPdfToDrive(task.type, b64, task.student.toLowerCase());
+                    done++;
+                } catch(err) {
+                    errors++;
+                }
+                const pct = Math.round((done + errors) / total * 100);
+                setStatus(`${done + errors} / ${total} — ${done} PDF(s) ok${errors ? ', ' + errors + ' erreur(s)' : ''}`, pct);
+            }
+
+            setStatus(`Terminé : ${done} PDF(s) générés${errors ? ', ' + errors + ' erreur(s)' : ''}.`, 100);
+        } catch(err) {
+            setStatus('Erreur : ' + err.message, 0);
+        }
+
+        setTimeout(() => { overlay.style.display = 'none'; }, 5000);
     }
 
     async function loadFromDrive() {
