@@ -81,6 +81,9 @@
         .history-group { background:#eef2f5; padding:8px 16px; font-weight:bold; color:var(--hecg-dark); font-size:0.8rem; border-top:1px solid #dde; }
         .history-search { padding:10px 14px; border-bottom:1px solid #eee; }
         .history-search input { width:100%; padding:6px 10px; border:1px solid #ccc; border-radius:4px; font-size:0.82rem; box-sizing:border-box; }
+        .filter-chips { display:flex; gap:6px; margin-top:7px; flex-wrap:wrap; }
+        .filter-chip  { padding:3px 10px; border-radius:12px; border:1px solid #ccc; background:#f5f5f5; font-size:0.72rem; cursor:pointer; color:#555; transition:all 0.15s; }
+        .filter-chip.active { background:var(--hecg-dark); color:white; border-color:var(--hecg-dark); }
 
         /* ALERT OVERLAY */
         #page-alert { display:none; position:fixed; top:20px; left:50%; transform:translateX(-50%); background:#dc3545; color:white; padding:12px 24px; border-radius:8px; z-index:99999; font-weight:bold; font-size:0.9rem; box-shadow:0 4px 15px rgba(0,0,0,0.3); }
@@ -324,7 +327,12 @@
             <button id="tab-all"    class="modal-tab"        onclick="showTab('all')" style="display:none">📊 Tous étudiants</button>
         </div>
         <div class="history-search" id="search-bar" style="display:none">
-            <input type="text" id="search-input" placeholder="Rechercher un étudiant…" oninput="filterHistory()">
+            <input type="text" id="search-input" placeholder="Rechercher par nom étudiant, créateur…" oninput="filterHistory()">
+            <div class="filter-chips">
+                <span class="filter-chip active" id="chip-all"       onclick="setFilterMode('all')">Tous</span>
+                <span class="filter-chip"        id="chip-etudiant"  onclick="setFilterMode('etudiant')">Par étudiant</span>
+                <span class="filter-chip"        id="chip-createur"  onclick="setFilterMode('createur')">Par créateur</span>
+            </div>
         </div>
         <div id="history-list"></div>
     </div>
@@ -696,7 +704,7 @@
             syncToDrive('final', list);
             // Capture le PDF visuel et l'envoie sur Drive
             setSyncStatus('☁ Capture PDF en cours…', 'sync-info');
-            captureCvPdfBase64().then(b64 => uploadPdfToDrive('final', b64));
+            captureCvPdfBase64().then(b64 => uploadPdfToDrive('final', b64, currentUserNom, data.nom, data.prenom, savedAt));
         }
         window.print();
     }
@@ -796,7 +804,7 @@
         setSavedList('drafts', list);
         syncToDrive('drafts', list);
         // Capture le PDF visuel et l'envoie sur Drive
-        captureCvPdfBase64().then(b64 => uploadPdfToDrive('drafts', b64));
+        captureCvPdfBase64().then(b64 => uploadPdfToDrive('drafts', b64, currentUserNom, data.nom, data.prenom, savedAt));
         const btn = document.getElementById('btn-draft');
         const orig = btn.innerText;
         btn.innerText = '✓ Brouillon sauvegardé !'; btn.style.background = '#28a745';
@@ -867,10 +875,44 @@
         showTab(type);
     }
 
+    let currentFilterMode = 'all'; // 'all' | 'etudiant' | 'createur'
+
+    function setFilterMode(mode) {
+        currentFilterMode = mode;
+        ['all','etudiant','createur'].forEach(m => {
+            const el = document.getElementById('chip-' + m);
+            if(el) el.classList.toggle('active', m === mode);
+        });
+        filterHistory();
+    }
+
     function filterHistory() {
-        const q = document.getElementById('search-input').value.toLowerCase();
+        const q = document.getElementById('search-input').value.toLowerCase().trim();
         if(!allCvsCache) return;
-        renderAllCVs(allCvsCache.filter(e => e.student.toLowerCase().includes(q)));
+        if(!q) { renderAllCVs(allCvsCache); return; }
+
+        const filtered = allCvsCache.map(entry => {
+            if(currentFilterMode === 'createur') {
+                // Filtre uniquement sur le compte créateur (nom du dossier Drive)
+                return entry.student.toLowerCase().includes(q) ? entry : null;
+            }
+            if(currentFilterMode === 'etudiant') {
+                // Filtre sur le nom de l'étudiant (champ nom dans chaque CV)
+                const cvs = (entry.cvs || []).filter(cv => (cv.nom || '').toLowerCase().includes(q));
+                return cvs.length ? { ...entry, cvs } : null;
+            }
+            // Mode 'all' : recherche dans tout (compte, nom étudiant, créateur savedBy)
+            const matchCompte  = entry.student.toLowerCase().includes(q);
+            const matchedCvs   = (entry.cvs || []).filter(cv =>
+                (cv.nom     || '').toLowerCase().includes(q) ||
+                (cv.savedBy || '').toLowerCase().includes(q)
+            );
+            if(matchCompte) return entry;
+            if(matchedCvs.length) return { ...entry, cvs: matchedCvs };
+            return null;
+        }).filter(Boolean);
+
+        renderAllCVs(filtered);
     }
 
     async function loadAllCVs() {
@@ -954,16 +996,29 @@
         }
     }
 
+    // Construit le nom de fichier PDF : {créateur}_{nomEtu}_{prenomEtu}_{date}
+    // Ex : velcker_russo_marie_03-06-2026
+    function buildPdfFilename(savedBy, studentNom, studentPrenom, savedAt) {
+        const safe = s => (s||'').normalize('NFD').replace(/[̀-ͯ]/g,'')
+                                  .replace(/[^a-z0-9]+/gi,'_').toLowerCase()
+                                  .replace(/^_+|_+$/g,'') || 'inconnu';
+        const date = (savedAt || new Date().toLocaleDateString('fr-FR')).replace(/\//g,'-');
+        return safe(savedBy) + '_' + safe(studentNom) + '_' + safe(studentPrenom) + '_' + date;
+    }
+
     // Envoie le PDF visuel (base64) sur Drive dans une requête séparée
-    // targetNom : nom d'utilisateur cible (par défaut : utilisateur connecté)
-    async function uploadPdfToDrive(type, pdfBase64, targetNom) {
+    // savedBy     : compte qui a créé le CV (ex. "velcker")
+    // studentNom/Prenom : données de l'étudiant (ex. "RUSSO", "Marie")
+    // savedAt     : date de sauvegarde (ex. "03/06/2026")
+    async function uploadPdfToDrive(type, pdfBase64, savedBy, studentNom, studentPrenom, savedAt) {
         if(!pdfBase64) return;
-        const nom = targetNom || currentUserNom;
+        const nom         = savedBy || currentUserNom;
+        const pdfFilename = buildPdfFilename(nom, studentNom, studentPrenom, savedAt);
         try {
             await fetch(apiUrl, {
                 method: 'POST',
                 headers: { 'Content-Type': 'text/plain' },
-                body: JSON.stringify({ nom, action: 'save_pdf', type, pdfBase64 }),
+                body: JSON.stringify({ nom, action: 'save_pdf', type, pdfBase64, pdfFilename }),
                 mode: 'no-cors'
             });
         } catch(e) { /* silencieux — le JSON est déjà sauvegardé */ }
@@ -1009,8 +1064,12 @@
                     restoreData(task.cv.data || task.cv);
                     fitToPage();
                     await new Promise(r => setTimeout(r, 600));
-                    const b64 = await captureCvPdfBase64();
-                    if(b64) await uploadPdfToDrive(task.type, b64, task.student.toLowerCase());
+                    const b64     = await captureCvPdfBase64();
+                    if(b64) {
+                        const cvData  = task.cv.data || task.cv;
+                        const creator = (task.cv.savedBy || task.student).toLowerCase();
+                        await uploadPdfToDrive(task.type, b64, creator, cvData.nom, cvData.prenom, task.cv.savedAt);
+                    }
                     done++;
                 } catch(err) {
                     errors++;
