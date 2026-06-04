@@ -219,7 +219,7 @@
 
     <!-- 3. EXPÉRIENCES -->
     <div class="form-section">
-        <h3>3. Expériences Professionnelles (Max 4)</h3>
+        <h3>3. Expériences Professionnelles (Max 6)</h3>
         <div id="exp-inputs"></div>
         <button class="btn-action" onclick="addExp()">+ Ajouter expérience</button>
     </div>
@@ -495,12 +495,19 @@
 
     function renderBlocks(inId, outId, isExp) {
         const list = document.getElementById(outId); list.innerHTML = '';
-        Array.from(document.getElementById(inId).children).forEach(b => {
+        const children = Array.from(document.getElementById(inId).children);
+        const maxMissions = isExp
+            ? (children.length <= 3 ? 8 : children.length === 4 ? 4 : children.length === 5 ? 3 : 2)
+            : 0;
+        children.forEach(b => {
             const fields = b.querySelectorAll('.block-field');
             if(!fields[0]) return;
             let missions = '';
             if(isExp) {
-                b.querySelectorAll('.missions-list .mission-row input').forEach(inp => { if(inp.value) missions += `<li>${inp.value}</li>`; });
+                let mCount = 0;
+                b.querySelectorAll('.missions-list .mission-row input').forEach(inp => {
+                    if(inp.value && mCount < maxMissions) { missions += `<li>${inp.value}</li>`; mCount++; }
+                });
             }
             list.innerHTML += `<div class="cv-block"><div class="cv-title">${fields[0].value} <span>${fields[2].value}</span></div><div class="cv-sub">${fields[1].value}</div>${missions ? `<ul>${missions}</ul>` : ''}</div>`;
         });
@@ -510,7 +517,7 @@
     // FORM BLOCKS
     // =============================================
     function addExp() {
-        if(expCt >= 4) return; expCt++;
+        if(expCt >= 6) return; expCt++;
         const div = document.createElement('div'); div.className = 'dynamic-block';
         div.innerHTML = `
             <input type="text" class="block-field" placeholder="Poste" oninput="render()">
