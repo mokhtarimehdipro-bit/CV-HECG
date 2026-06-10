@@ -273,7 +273,7 @@
             <div class="header-main">
                 <h1 class="p-name" id="out-full-name">NOM Prénom</h1>
                 <div class="p-age"><span id="out-age">--</span> ans</div>
-                <div class="p-search">Recherche une alternance en <b id="out-dip-label">--</b><br>Rythme 2j à l'école / 3j en entreprise</div>
+                <div class="p-search">Recherche une alternance en <b id="out-dip-label">--</b><br><span id="out-rythme">Rythme 2j à l'école / 3j en entreprise</span></div>
                 <div class="contact-column">
                     <div class="contact-item-row"><i class="fa fa-phone"></i> <span id="out-tel">06 00 00 00 00</span></div>
                     <div class="contact-item-row"><i class="fa fa-car"></i> <span id="out-car">Véhiculé(e) : Oui</span></div>
@@ -448,6 +448,9 @@
         document.getElementById('out-dip-label').innerText = dip;
         document.querySelectorAll('.dyn-dip-name').forEach(e => e.innerText = dip);
         document.getElementById('out-dip-year').innerText = db.years[dip];
+        document.getElementById('out-rythme').innerText = (dip === 'Bachelor CDSP')
+            ? 'Rythme 1j en formation / 4j en entreprise'
+            : 'Rythme 2j à l\'école / 3j en entreprise';
 
         document.getElementById('out-tel').innerText    = document.getElementById('tel').value    || "06 00 00 00 00";
         document.getElementById('out-email').innerText  = document.getElementById('email').value  || "email@etudiant.fr";
