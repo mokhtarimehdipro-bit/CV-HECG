@@ -57,6 +57,7 @@
         #btn-draft { background:var(--hecg-teal); color:white; }
         #btn-hist  { background:var(--hecg-navy); color:white; }
         #btn-all   { background:#5a6480; color:white; }
+        #btn-reset { background:#c0524a; color:white; }
         #sync-status { font-size:0.68rem; min-height:13px; margin-bottom:5px; text-align:right; }
         .sync-ok { color:#28a745; } .sync-err { color:#dc3545; } .sync-info { color:#6c757d; }
 
@@ -160,6 +161,7 @@
         <button class="btn-hist-action" id="btn-hist"  onclick="showHistory('mine')">📋 Mes CV</button>
         <button class="btn-hist-action" id="btn-all"   onclick="showHistory('all')" style="display:none">📊 Tous les CV</button>
         <button class="btn-hist-action" id="btn-rebuild" onclick="rebuildAllPdfsFromBrowser()" style="display:none;background:#7b5ea7;">🔄 Reconstruire PDFs</button>
+        <button class="btn-hist-action" id="btn-reset" onclick="resetForm()">🗑️ Réinitialiser</button>
     </div>
 
     <!-- Overlay reconstruction rétroactive -->
@@ -423,6 +425,33 @@
         document.getElementById('login-screen').style.display = 'flex';
         document.getElementById('access-nom').value = '';
         document.getElementById('access-mdp').value = '';
+    }
+
+    function resetForm() {
+        if(!confirm("Voulez-vous vraiment réinitialiser le CV ? Toutes les données saisies seront effacées.")) return;
+
+        ['nom','prenom','linkedin','tel','email','ville',
+         'soft_extra1','soft_extra2','soft_extra3',
+         'hard_extra1','hard_extra2','hard_extra3',
+         'info_extra1','info_extra2','info_extra3',
+         'hobby_extra1','hobby_extra2','hobby_extra3'].forEach(id => { document.getElementById(id).value = ''; });
+
+        document.getElementById('dob').value = '';
+        document.getElementById('genre').selectedIndex = 0;
+        document.getElementById('diplome_select').selectedIndex = 0;
+        document.getElementById('vehicule').selectedIndex = 0;
+
+        document.querySelectorAll('input[name="soft"], input[name="hard"], input[name="hobby"]').forEach(c => c.checked = false);
+        document.getElementById('check-office').checked = true;
+
+        document.getElementById('edu-inputs').innerHTML = '';
+        document.getElementById('exp-inputs').innerHTML = '';
+        document.getElementById('lang-inputs').innerHTML = '';
+        eduCt = 0; expCt = 0;
+
+        document.getElementById('cv-img').src = 'https://via.placeholder.com/150?text=PHOTO';
+
+        render();
     }
 
     // =============================================
