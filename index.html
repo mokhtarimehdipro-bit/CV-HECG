@@ -499,8 +499,13 @@
     function renderBlocks(inId, outId, isExp) {
         const list = document.getElementById(outId); list.innerHTML = '';
         const children = Array.from(document.getElementById(inId).children);
+        // Limite basée sur le nombre total de missions réellement saisies (pas sur le nombre de blocs
+        // d'expérience), pour que l'ajout d'une expérience vide n'affecte pas l'affichage des autres.
+        const totalMissionsFilled = isExp
+            ? children.reduce((sum, b) => sum + Array.from(b.querySelectorAll('.missions-list .mission-row input')).filter(i => i.value).length, 0)
+            : 0;
         const maxMissions = isExp
-            ? (children.length <= 3 ? 8 : children.length === 4 ? 4 : children.length === 5 ? 3 : 2)
+            ? (totalMissionsFilled <= 24 ? 8 : totalMissionsFilled <= 32 ? 6 : totalMissionsFilled <= 40 ? 4 : 3)
             : 0;
         children.forEach(b => {
             const fields = b.querySelectorAll('.block-field');
