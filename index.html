@@ -13,6 +13,7 @@
             /* Couleurs du CV imprimé : recalculées par diplôme via applyCvTheme() */
             --cv-name: #70a5aa; --cv-text: #3f5071; --cv-accent: #ed7d31;
             --cv-gradient: linear-gradient(180deg, #70a5aa 0%, #22475d 100%);
+            --gold: #c9a227; --gold-light: #e9cf7d; --gold-dark: #8a6c14;
             --line-width: 1px;
             --adj-block-mb: 15px; --adj-li-mb: 3px; --adj-ul-m: 4px;
             --adj-section-mb: 12px; --adj-section-mt: 25px; --adj-contact-gap: 5px;
@@ -63,6 +64,12 @@
         #btn-reset { background:#c0524a; color:white; }
         #sync-status { font-size:0.68rem; min-height:13px; margin-bottom:5px; text-align:right; }
         .sync-ok { color:#28a745; } .sync-err { color:#dc3545; } .sync-info { color:#6c757d; }
+
+        /* PANNEAU ÉQUIPE (réservé Personnel) */
+        #staff-panel { background:linear-gradient(180deg,#fdf6e3 0%,#f6ecc9 100%); border:1px solid var(--gold); border-radius:6px; padding:8px 12px; margin-bottom:10px; }
+        #staff-panel label { display:flex; align-items:center; gap:8px; margin:0; font-size:0.78rem; font-weight:bold; color:var(--gold-dark); cursor:pointer; }
+        #staff-panel input { width:auto; margin:0; }
+        #staff-panel small { display:block; font-weight:normal; color:#8a7a4a; font-size:0.68rem; margin-top:3px; }
 
         /* MODAL */
         .modal-overlay { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:10000; align-items:center; justify-content:center; }
@@ -121,6 +128,15 @@
         .footer-cv { margin-top:auto; padding-top:6px; flex-shrink:0; }
         .edition-stamp { position:absolute; bottom:10px; right:20px; font-size:9px; color:#aaa; }
 
+        /* MENTION "PROFIL RECOMMANDÉ" — additive uniquement (outline/box-shadow : n'affecte pas les dimensions,
+           donc aucun impact sur le calcul de pagination fitToPage) */
+        .recommend-badge { display:none; position:absolute; top:14px; left:50%; transform:translateX(-50%); align-items:center; gap:6px; background:linear-gradient(180deg, #fdf3d0 0%, #f3e2a8 100%); outline:1px solid var(--gold-dark); color:#6b551a; font-size:9.5px; font-weight:bold; letter-spacing:0.4px; text-transform:uppercase; padding:4px 14px; border-radius:20px; z-index:5; white-space:nowrap; }
+        .recommend-badge i { color:var(--gold-dark); font-size:10px; }
+        #cv-page.recommended { outline:1px solid var(--gold); outline-offset:-6px; }
+        #cv-page.recommended .recommend-badge { display:flex; }
+        #cv-page.recommended .photo-wrap { box-shadow:0 0 0 3px #fff, 0 0 0 5px var(--gold); }
+        #cv-page.recommended .section-box { box-shadow:inset 0 -2px 0 0 var(--gold-light); }
+
         @media print {
             @page { size:A4; margin:0; }
             body { background:white; height:auto; }
@@ -177,6 +193,15 @@
                 <div id="rebuild-bar" style="height:8px;background:#70a5aa;width:0%;transition:width 0.4s;"></div>
             </div>
         </div>
+    </div>
+
+    <!-- PANNEAU ÉQUIPE (Personnel uniquement) -->
+    <div id="staff-panel" style="display:none;">
+        <label>
+            <input type="checkbox" id="check-recommended" onchange="render()">
+            🏅 Profil hautement recommandé par l'établissement
+        </label>
+        <small>Réservé à l'équipe HECG — ajoute une mention et des liserés dorés sur le CV.</small>
     </div>
 
     <!-- 1. PROFIL -->
@@ -274,6 +299,7 @@
   <div id="preview-side">
     <div id="cv-page">
         <img class="logo-hecg" src="https://hecg.fr/wp-content/uploads/2025/03/LOGO-FORMAT-PNG-1-1.png">
+        <div class="recommend-badge" id="recommend-badge"><i class="fa-solid fa-award"></i> Profil hautement recommandé par l'établissement</div>
         <div class="cv-header">
             <div class="photo-wrap"><img id="cv-img" src="https://via.placeholder.com/150?text=PHOTO"></div>
             <div class="header-main">
@@ -449,6 +475,8 @@
         document.getElementById('btn-all').style.display     = isPerso ? '' : 'none';
         document.getElementById('btn-rebuild').style.display = isPerso ? '' : 'none';
         document.getElementById('tab-all').style.display     = isPerso ? '' : 'none';
+        document.getElementById('staff-panel').style.display = isPerso ? '' : 'none';
+        if(!isPerso) { document.getElementById('check-recommended').checked = false; }
     }
 
     function logout() {
@@ -475,6 +503,7 @@
 
         document.querySelectorAll('input[name="soft"], input[name="hard"], input[name="hobby"]').forEach(c => c.checked = false);
         document.getElementById('check-office').checked = true;
+        document.getElementById('check-recommended').checked = false;
 
         document.getElementById('edu-inputs').innerHTML = '';
         document.getElementById('exp-inputs').innerHTML = '';
@@ -504,6 +533,7 @@
         if(dob) document.getElementById('out-age').innerText = Math.floor((new Date() - new Date(dob)) / 31557600000);
         const dip = document.getElementById('diplome_select').value;
         applyCvTheme(dip);
+        document.getElementById('cv-page').classList.toggle('recommended', document.getElementById('check-recommended').checked);
         document.getElementById('out-dip-label').innerText = dip;
         document.querySelectorAll('.dyn-dip-name').forEach(e => e.innerText = dip);
         document.getElementById('out-dip-year').innerText = db.years[dip];
@@ -679,6 +709,7 @@
             nom: get('nom'), prenom: get('prenom'), genre: get('genre'), dob: get('dob'),
             linkedin: get('linkedin'), tel: get('tel'), email: get('email'), ville: get('ville'),
             vehicule: get('vehicule'), diplome: get('diplome_select'),
+            recommande: document.getElementById('check-recommended').checked,
             soft_extra1: get('soft_extra1'), soft_extra2: get('soft_extra2'), soft_extra3: get('soft_extra3'),
             hard_extra1: get('hard_extra1'), hard_extra2: get('hard_extra2'), hard_extra3: get('hard_extra3'),
             info_extra1: get('info_extra1'), info_extra2: get('info_extra2'), info_extra3: get('info_extra3'),
@@ -698,6 +729,7 @@
         set('email', data.email); set('ville', data.ville);
         document.getElementById('vehicule').value = data.vehicule || 'Oui';
         document.getElementById('diplome_select').value = (data.diplome === 'DSCG' ? 'DSCG 1' : data.diplome) || 'BTS GPME 1';
+        document.getElementById('check-recommended').checked = !!data.recommande;
 
         // Support ancien format (soft_extra) et nouveau (soft_extra1/2/3)
         set('soft_extra1',  data.soft_extra1  || data.soft_extra  || '');
