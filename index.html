@@ -66,6 +66,14 @@
         #sync-status { font-size:0.68rem; min-height:13px; margin-bottom:5px; text-align:right; }
         .sync-ok { color:#28a745; } .sync-err { color:#dc3545; } .sync-info { color:#6c757d; }
 
+        /* PALETTE DE COULEURS */
+        .palette-grid { display:grid; grid-template-columns:repeat(5, 1fr); gap:8px; margin-top:4px; }
+        .palette-swatch { position:relative; height:34px; border-radius:6px; cursor:pointer; box-shadow:inset 0 0 0 1px rgba(0,0,0,0.08); transition:transform 0.12s; }
+        .palette-swatch:hover { transform:scale(1.07); }
+        .palette-swatch.selected { box-shadow:0 0 0 2px white inset, 0 0 0 2px var(--hecg-dark); }
+        .palette-swatch.selected::after { content:"\2713"; position:absolute; inset:0; display:flex; align-items:center; justify-content:center; color:#fff; font-weight:bold; font-size:14px; text-shadow:0 1px 2px rgba(0,0,0,0.5); }
+        .palette-reset { display:block; text-align:center; font-size:0.68rem; color:#888; margin-top:6px; cursor:pointer; text-decoration:underline; }
+
         /* PANNEAU ÉQUIPE (réservé Personnel) */
         #staff-panel { background:linear-gradient(180deg,#fdf6e3 0%,#f6ecc9 100%); border:1px solid var(--gold); border-radius:6px; padding:8px 12px; margin-bottom:10px; }
         #staff-panel label { display:flex; align-items:center; gap:8px; margin:0; font-size:0.78rem; font-weight:bold; color:var(--gold-dark); cursor:pointer; }
@@ -249,6 +257,13 @@
         <button class="btn-action" onclick="addEdu()">+ Ajouter une formation</button>
     </div>
 
+    <!-- PALETTE COULEUR -->
+    <div class="form-section">
+        <h3>🎨 Palette de couleurs</h3>
+        <div class="palette-grid" id="palette-grid"></div>
+        <span class="palette-reset" id="palette-reset" style="display:none" onclick="selectPaletteAuto()">↺ Réinitialiser (auto selon diplôme)</span>
+    </div>
+
     <!-- 3. EXPÉRIENCES -->
     <div class="form-section">
         <h3>3. Expériences Professionnelles (Max 6)</h3>
@@ -392,33 +407,62 @@
         }
     };
 
-    // Thème visuel du CV par diplôme : palette "bankable" raffinée (bleu / orange / gris de la charte HECG,
-    // tons adoucis, jamais de noir pur) + fond légèrement dégradé, presque blanc, teinté par diplôme/niveau.
-    const cvThemes = {
-        "BTS CG 1":       { name:"#5b8a9c", text:"#33465c", accent:"#d68a3d", gradient:"linear-gradient(160deg, #7fa8b3 0%, #2c4258 100%)", bg:"#eef4f6" },
-        "BTS CG 2":       { name:"#3f6b78", text:"#22333f", accent:"#c07a35", gradient:"linear-gradient(160deg, #4f7e8a 0%, #1c2b36 100%)", bg:"#e7eff1" },
+    // Palette de couleurs du CV : 10 camaïeux dégradés "bankable" (bleu / orange / gris de la charte HECG,
+    // tons adoucis, jamais de noir pur). Chaque diplôme préselectionne un camaïeu par défaut ; l'utilisateur
+    // peut ensuite en choisir un autre manuellement via les pastilles (palette-grid).
+    const colorPalettes = [
+        { id:"cg1",   label:"Lagon",               name:"#5b8a9c", text:"#33465c", accent:"#d68a3d", gradient:"linear-gradient(135deg, #7fa8b3 0%, #2c4258 100%)", bg:"#eef4f6" },
+        { id:"cg2",   label:"Marine",               name:"#3f6b78", text:"#22333f", accent:"#c07a35", gradient:"linear-gradient(135deg, #4f7e8a 0%, #1c2b36 100%)", bg:"#e7eff1" },
+        { id:"azur",  label:"Azur Profond",         name:"#4a5f8a", text:"#26324a", accent:"#c9822f", gradient:"linear-gradient(135deg, #6b84ac 0%, #202c46 100%)", bg:"#eceff5" },
+        { id:"dcg1",  label:"Ambre",                name:"#c98a4a", text:"#5c4a3a", accent:"#a8632a", gradient:"linear-gradient(135deg, #e3b479 0%, #b06b2e 100%)", bg:"#f8efe0" },
+        { id:"dcg2",  label:"Cuivre",                name:"#b06b2e", text:"#4a3b2e", accent:"#8f531f", gradient:"linear-gradient(135deg, #cf9757 0%, #8f531f 100%)", bg:"#f4e7d2" },
+        { id:"dcg3",  label:"Terracotta",           name:"#8f531f", text:"#3c2f26", accent:"#6e3f16", gradient:"linear-gradient(135deg, #b8813f 0%, #6e3f16 100%)", bg:"#efdec1" },
+        { id:"dscg1", label:"Bleu Ambré",           name:"#c9822f", text:"#2c3f52", accent:"#3f6178", gradient:"linear-gradient(135deg, #d69a55 0%, #2c4258 100%)", bg:"#f3ede3" },
+        { id:"dscg2", label:"Bleu Ambré Profond",   name:"#a8632a", text:"#1e2c3a", accent:"#2c4258", gradient:"linear-gradient(135deg, #b8813f 0%, #1c2b36 100%)", bg:"#ede5d8" },
+        { id:"gpme",  label:"Gris Bleuté",           name:"#5b7182", text:"#3a4652", accent:"#c9822f", gradient:"linear-gradient(135deg, #7f95a3 0%, #37434d 100%)", bg:"#eef1f2" },
+        { id:"cdsp",  label:"Anthracite",           name:"#3f5361", text:"#28323a", accent:"#c9822f", gradient:"linear-gradient(135deg, #7f95a3 0%, #232b31 100%)", bg:"#e6eaec" }
+    ];
 
-        "DCG 1": { name:"#c98a4a", text:"#5c4a3a", accent:"#a8632a", gradient:"linear-gradient(160deg, #e3b479 0%, #b06b2e 100%)", bg:"#f8efe0" },
-        "DCG 2": { name:"#b06b2e", text:"#4a3b2e", accent:"#8f531f", gradient:"linear-gradient(160deg, #cf9757 0%, #8f531f 100%)", bg:"#f4e7d2" },
-        "DCG 3": { name:"#8f531f", text:"#3c2f26", accent:"#6e3f16", gradient:"linear-gradient(160deg, #b8813f 0%, #6e3f16 100%)", bg:"#efdec1" },
-
-        "DSCG 1": { name:"#c9822f", text:"#2c3f52", accent:"#3f6178", gradient:"linear-gradient(135deg, #d69a55 0%, #2c4258 100%)", bg:"#f3ede3" },
-        "DSCG 2": { name:"#a8632a", text:"#1e2c3a", accent:"#2c4258", gradient:"linear-gradient(135deg, #b8813f 0%, #1c2b36 100%)", bg:"#ede5d8" },
-
-        "BTS GPME 1": { name:"#5b7182", text:"#3a4652", accent:"#c9822f", gradient:"linear-gradient(160deg, #7f95a3 0%, #37434d 100%)", bg:"#eef1f2" },
-        "BTS GPME 2": { name:"#5b7182", text:"#3a4652", accent:"#c9822f", gradient:"linear-gradient(160deg, #7f95a3 0%, #37434d 100%)", bg:"#eef1f2" },
-
-        "Bachelor CDSP": { name:"#3f5361", text:"#28323a", accent:"#c9822f", gradient:"linear-gradient(150deg, #7f95a3 0%, #3f5361 50%, #232b31 100%)", bg:"#e6eaec" }
+    // Camaïeu préselectionné par diplôme (l'utilisateur peut le remplacer via selectedPaletteId)
+    const diplomaPaletteMap = {
+        "BTS CG 1":"cg1", "BTS CG 2":"cg2",
+        "DCG 1":"dcg1", "DCG 2":"dcg2", "DCG 3":"dcg3",
+        "DSCG 1":"dscg1", "DSCG 2":"dscg2",
+        "BTS GPME 1":"gpme", "BTS GPME 2":"gpme",
+        "Bachelor CDSP":"cdsp"
     };
 
+    let selectedPaletteId = null; // null = camaïeu automatique selon le diplôme
+
+    function getPalette(id) { return colorPalettes.find(p => p.id === id) || colorPalettes[0]; }
+
+    function genPaletteSwatches() {
+        const box = document.getElementById('palette-grid');
+        colorPalettes.forEach(p => {
+            const el = document.createElement('div');
+            el.className = 'palette-swatch';
+            el.style.background = p.gradient;
+            el.title = p.label;
+            el.dataset.id = p.id;
+            el.onclick = () => { selectedPaletteId = p.id; render(); };
+            box.appendChild(el);
+        });
+    }
+
+    function selectPaletteAuto() { selectedPaletteId = null; render(); }
+
     function applyCvTheme(dip) {
-        const t = cvThemes[dip] || cvThemes["BTS CG 1"];
+        const activeId = selectedPaletteId || diplomaPaletteMap[dip] || 'cg1';
+        const t = getPalette(activeId);
         const root = document.documentElement;
         root.style.setProperty('--cv-name', t.name);
         root.style.setProperty('--cv-text', t.text);
         root.style.setProperty('--cv-accent', t.accent);
         root.style.setProperty('--cv-gradient', t.gradient);
         root.style.setProperty('--cv-bg', `linear-gradient(165deg, #ffffff 0%, #ffffff 45%, ${t.bg} 100%)`);
+
+        document.querySelectorAll('.palette-swatch').forEach(el => el.classList.toggle('selected', el.dataset.id === activeId));
+        document.getElementById('palette-reset').style.display = selectedPaletteId ? '' : 'none';
     }
 
     let expCt = 0, eduCt = 0;
@@ -432,6 +476,7 @@
         genChecks('soft-checks', db.soft, 'soft', 4);
         genChecks('hard-checks', db.hard, 'hard', 4);
         genChecks('hobby-checks', db.hobbies, 'hobby', 3);
+        genPaletteSwatches();
         document.getElementById('out-date').innerText = new Date().toLocaleDateString('fr-FR');
         render();
     }
@@ -503,6 +548,7 @@
         document.getElementById('genre').selectedIndex = 0;
         document.getElementById('diplome_select').selectedIndex = 0;
         document.getElementById('vehicule').selectedIndex = 0;
+        selectedPaletteId = null;
 
         document.querySelectorAll('input[name="soft"], input[name="hard"], input[name="hobby"]').forEach(c => c.checked = false);
         document.getElementById('check-office').checked = true;
@@ -713,6 +759,7 @@
             linkedin: get('linkedin'), tel: get('tel'), email: get('email'), ville: get('ville'),
             vehicule: get('vehicule'), diplome: get('diplome_select'),
             recommande: document.getElementById('check-recommended').checked,
+            palette: selectedPaletteId || '',
             soft_extra1: get('soft_extra1'), soft_extra2: get('soft_extra2'), soft_extra3: get('soft_extra3'),
             hard_extra1: get('hard_extra1'), hard_extra2: get('hard_extra2'), hard_extra3: get('hard_extra3'),
             info_extra1: get('info_extra1'), info_extra2: get('info_extra2'), info_extra3: get('info_extra3'),
@@ -733,6 +780,7 @@
         document.getElementById('vehicule').value = data.vehicule || 'Oui';
         document.getElementById('diplome_select').value = (data.diplome === 'DSCG' ? 'DSCG 1' : data.diplome) || 'BTS GPME 1';
         document.getElementById('check-recommended').checked = !!data.recommande;
+        selectedPaletteId = data.palette || null;
 
         // Support ancien format (soft_extra) et nouveau (soft_extra1/2/3)
         set('soft_extra1',  data.soft_extra1  || data.soft_extra  || '');
