@@ -67,7 +67,9 @@
         .sync-ok { color:#28a745; } .sync-err { color:#dc3545; } .sync-info { color:#6c757d; }
 
         /* PALETTE DE COULEURS */
-        .palette-grid { display:grid; grid-template-columns:repeat(5, 1fr); gap:8px; margin-top:4px; }
+        .palette-grid { display:grid; grid-template-columns:repeat(5, 1fr); gap:8px; margin-top:4px; max-height:260px; overflow-y:auto; padding-right:4px; }
+        .palette-cat { grid-column:1 / -1; font-size:0.66rem; font-weight:bold; text-transform:uppercase; letter-spacing:0.5px; color:#999; margin:6px 0 -2px; }
+        .palette-cat:first-child { margin-top:0; }
         .palette-swatch { position:relative; height:34px; border-radius:6px; cursor:pointer; box-shadow:inset 0 0 0 1px rgba(0,0,0,0.08); transition:transform 0.12s; }
         .palette-swatch:hover { transform:scale(1.07); }
         .palette-swatch.selected { box-shadow:0 0 0 2px white inset, 0 0 0 2px var(--hecg-dark); }
@@ -411,16 +413,42 @@
     // tons adoucis, jamais de noir pur). Chaque diplôme préselectionne un camaïeu par défaut ; l'utilisateur
     // peut ensuite en choisir un autre manuellement via les pastilles (palette-grid).
     const colorPalettes = [
-        { id:"cg1",   label:"Lagon",               name:"#5b8a9c", text:"#33465c", accent:"#d68a3d", gradient:"linear-gradient(135deg, #7fa8b3 0%, #2c4258 100%)", bg:"#eef4f6" },
-        { id:"cg2",   label:"Marine",               name:"#3f6b78", text:"#22333f", accent:"#c07a35", gradient:"linear-gradient(135deg, #4f7e8a 0%, #1c2b36 100%)", bg:"#e7eff1" },
-        { id:"azur",  label:"Azur Profond",         name:"#4a5f8a", text:"#26324a", accent:"#c9822f", gradient:"linear-gradient(135deg, #6b84ac 0%, #202c46 100%)", bg:"#eceff5" },
-        { id:"dcg1",  label:"Ambre",                name:"#c98a4a", text:"#5c4a3a", accent:"#a8632a", gradient:"linear-gradient(135deg, #e3b479 0%, #b06b2e 100%)", bg:"#f8efe0" },
-        { id:"dcg2",  label:"Cuivre",                name:"#b06b2e", text:"#4a3b2e", accent:"#8f531f", gradient:"linear-gradient(135deg, #cf9757 0%, #8f531f 100%)", bg:"#f4e7d2" },
-        { id:"dcg3",  label:"Terracotta",           name:"#8f531f", text:"#3c2f26", accent:"#6e3f16", gradient:"linear-gradient(135deg, #b8813f 0%, #6e3f16 100%)", bg:"#efdec1" },
-        { id:"dscg1", label:"Bleu Ambré",           name:"#c9822f", text:"#2c3f52", accent:"#3f6178", gradient:"linear-gradient(135deg, #d69a55 0%, #2c4258 100%)", bg:"#f3ede3" },
-        { id:"dscg2", label:"Bleu Ambré Profond",   name:"#a8632a", text:"#1e2c3a", accent:"#2c4258", gradient:"linear-gradient(135deg, #b8813f 0%, #1c2b36 100%)", bg:"#ede5d8" },
-        { id:"gpme",  label:"Gris Bleuté",           name:"#5b7182", text:"#3a4652", accent:"#c9822f", gradient:"linear-gradient(135deg, #7f95a3 0%, #37434d 100%)", bg:"#eef1f2" },
-        { id:"cdsp",  label:"Anthracite",           name:"#3f5361", text:"#28323a", accent:"#c9822f", gradient:"linear-gradient(135deg, #7f95a3 0%, #232b31 100%)", bg:"#e6eaec" }
+        // --- Classique (bankable, tons adoucis — inchangés) ---
+        { id:"cg1",   label:"Lagon",              cat:"Classique", name:"#5b8a9c", text:"#33465c", accent:"#d68a3d", gradient:"linear-gradient(135deg, #7fa8b3 0%, #2c4258 100%)", bg:"#eef4f6" },
+        { id:"cg2",   label:"Marine",             cat:"Classique", name:"#3f6b78", text:"#22333f", accent:"#c07a35", gradient:"linear-gradient(135deg, #4f7e8a 0%, #1c2b36 100%)", bg:"#e7eff1" },
+        { id:"azur",  label:"Azur Profond",       cat:"Classique", name:"#4a5f8a", text:"#26324a", accent:"#c9822f", gradient:"linear-gradient(135deg, #6b84ac 0%, #202c46 100%)", bg:"#eceff5" },
+        { id:"dcg1",  label:"Ambre",              cat:"Classique", name:"#c98a4a", text:"#5c4a3a", accent:"#a8632a", gradient:"linear-gradient(135deg, #e3b479 0%, #b06b2e 100%)", bg:"#f8efe0" },
+        { id:"dcg2",  label:"Cuivre",             cat:"Classique", name:"#b06b2e", text:"#4a3b2e", accent:"#8f531f", gradient:"linear-gradient(135deg, #cf9757 0%, #8f531f 100%)", bg:"#f4e7d2" },
+        { id:"dcg3",  label:"Terracotta",         cat:"Classique", name:"#8f531f", text:"#3c2f26", accent:"#6e3f16", gradient:"linear-gradient(135deg, #b8813f 0%, #6e3f16 100%)", bg:"#efdec1" },
+        { id:"dscg1", label:"Bleu Ambré",         cat:"Classique", name:"#c9822f", text:"#2c3f52", accent:"#3f6178", gradient:"linear-gradient(135deg, #d69a55 0%, #2c4258 100%)", bg:"#f3ede3" },
+        { id:"dscg2", label:"Bleu Ambré Profond", cat:"Classique", name:"#a8632a", text:"#1e2c3a", accent:"#2c4258", gradient:"linear-gradient(135deg, #b8813f 0%, #1c2b36 100%)", bg:"#ede5d8" },
+        { id:"gpme",  label:"Gris Bleuté",        cat:"Classique", name:"#5b7182", text:"#3a4652", accent:"#c9822f", gradient:"linear-gradient(135deg, #7f95a3 0%, #37434d 100%)", bg:"#eef1f2" },
+        { id:"cdsp",  label:"Anthracite",         cat:"Classique", name:"#3f5361", text:"#28323a", accent:"#c9822f", gradient:"linear-gradient(135deg, #7f95a3 0%, #232b31 100%)", bg:"#e6eaec" },
+
+        // --- Vive (tons plus vifs et modernes, même famille bleu / orange / gris) ---
+        { id:"vblue1",  label:"Cobalt",              cat:"Vive", name:"#2f6fed", text:"#1b2a4a", accent:"#1b4fd1", gradient:"linear-gradient(135deg, #4f8ef7 0%, #1b3a8a 100%)", bg:"#eaf1fd" },
+        { id:"vblue2",  label:"Saphir",              cat:"Vive", name:"#2457c9", text:"#16213d", accent:"#123a8f", gradient:"linear-gradient(135deg, #3f7fe0 0%, #142a63 100%)", bg:"#e8eefb" },
+        { id:"vblue3",  label:"Ciel Électrique",     cat:"Vive", name:"#1f9ce8", text:"#173047", accent:"#0f7cc4", gradient:"linear-gradient(135deg, #4fc3f7 0%, #0d5f96 100%)", bg:"#e7f6fd" },
+        { id:"vblue4",  label:"Indigo Moderne",      cat:"Vive", name:"#3b4fa8", text:"#1c2440", accent:"#2c3a80", gradient:"linear-gradient(135deg, #6a7fd6 0%, #22285e 100%)", bg:"#eceefa" },
+        { id:"vblue5",  label:"Turquoise Corporate", cat:"Vive", name:"#0e9c9c", text:"#0f2e2e", accent:"#0a7a7a", gradient:"linear-gradient(135deg, #3fd6cf 0%, #0c6a6a 100%)", bg:"#e5f8f6" },
+
+        { id:"vorg1",   label:"Tangerine",           cat:"Vive", name:"#f5821f", text:"#5c3712", accent:"#d9660b", gradient:"linear-gradient(135deg, #ffb15c 0%, #e2600a 100%)", bg:"#fdf1e2" },
+        { id:"vorg2",   label:"Corail Vif",          cat:"Vive", name:"#f4623a", text:"#5a2c1c", accent:"#d8451e", gradient:"linear-gradient(135deg, #ff8a65 0%, #d8451e 100%)", bg:"#fdece5" },
+        { id:"vorg3",   label:"Safran",              cat:"Vive", name:"#c98a0c", text:"#4d3a0c", accent:"#b8730c", gradient:"linear-gradient(135deg, #ffce54 0%, #d68910 100%)", bg:"#fdf6e2" },
+        { id:"vorg4",   label:"Sienne Éclat",        cat:"Vive", name:"#d9591c", text:"#4a2313", accent:"#b8430f", gradient:"linear-gradient(135deg, #f3894f 0%, #a83e10 100%)", bg:"#fbe9dd" },
+        { id:"vorg5",   label:"Ambre Solaire",       cat:"Vive", name:"#e08a1e", text:"#4a3410", accent:"#c06f10", gradient:"linear-gradient(135deg, #ffb347 0%, #c9630e 100%)", bg:"#fdf0dd" },
+
+        { id:"vgray1",  label:"Acier",               cat:"Vive", name:"#5b7a94", text:"#26333d", accent:"#3d5b73", gradient:"linear-gradient(135deg, #93aec2 0%, #2c4256 100%)", bg:"#eef2f5" },
+        { id:"vgray2",  label:"Graphite",            cat:"Vive", name:"#5a6672", text:"#242a30", accent:"#3f4750", gradient:"linear-gradient(135deg, #8b98a4 0%, #262c32 100%)", bg:"#eef0f2" },
+        { id:"vgray3",  label:"Platine",             cat:"Vive", name:"#7387a0", text:"#2d3947", accent:"#4c637c", gradient:"linear-gradient(135deg, #b3c2d1 0%, #4a5f75 100%)", bg:"#f2f5f8" },
+        { id:"vgray4",  label:"Ardoise Vive",        cat:"Vive", name:"#4a6480", text:"#202933", accent:"#33475e", gradient:"linear-gradient(135deg, #7c99b8 0%, #22303f 100%)", bg:"#edf1f5" },
+        { id:"vgray5",  label:"Étain",               cat:"Vive", name:"#69737d", text:"#2b3036", accent:"#454e57", gradient:"linear-gradient(135deg, #9aa5ae 0%, #33393f 100%)", bg:"#eef0f1" },
+
+        { id:"vblend1", label:"Fusion Bankaire",     cat:"Vive", name:"#e2680f", text:"#1b2a4a", accent:"#2457c9", gradient:"linear-gradient(135deg, #ffb15c 0%, #1b3a8a 100%)", bg:"#fdf3ea" },
+        { id:"vblend2", label:"Contraste Urbain",    cat:"Vive", name:"#f4623a", text:"#16213d", accent:"#3f7fe0", gradient:"linear-gradient(120deg, #142a63 0%, #f4623a 100%)", bg:"#eef1fa" },
+        { id:"vblend3", label:"Horizon",             cat:"Vive", name:"#b8730c", text:"#1c2440", accent:"#3b4fa8", gradient:"linear-gradient(135deg, #4fc3f7 0%, #ffb347 100%)", bg:"#eef7fb" },
+        { id:"vblend4", label:"Duo Prestige",        cat:"Vive", name:"#d9591c", text:"#1b2a3a", accent:"#2f6fed", gradient:"linear-gradient(140deg, #2f6fed 0%, #d9591c 100%)", bg:"#eef3fb" },
+        { id:"vblend5", label:"Éclipse",             cat:"Vive", name:"#d9591c", text:"#0f1b2e", accent:"#f4623a", gradient:"linear-gradient(135deg, #0f1b2e 0%, #d9591c 100%)", bg:"#eef1f6" }
     ];
 
     // Camaïeu préselectionné par diplôme (l'utilisateur peut le remplacer via selectedPaletteId)
@@ -438,7 +466,15 @@
 
     function genPaletteSwatches() {
         const box = document.getElementById('palette-grid');
+        let lastCat = null;
         colorPalettes.forEach(p => {
+            if(p.cat !== lastCat) {
+                lastCat = p.cat;
+                const h = document.createElement('div');
+                h.className = 'palette-cat';
+                h.textContent = lastCat;
+                box.appendChild(h);
+            }
             const el = document.createElement('div');
             el.className = 'palette-swatch';
             el.style.background = p.gradient;
