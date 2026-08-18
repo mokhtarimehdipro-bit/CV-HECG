@@ -13,7 +13,8 @@
             /* Couleurs du CV imprimé : recalculées par diplôme via applyCvTheme() */
             --cv-name: #70a5aa; --cv-text: #3f5071; --cv-accent: #ed7d31;
             --cv-gradient: linear-gradient(180deg, #70a5aa 0%, #22475d 100%);
-            --gold: #c9a227; --gold-light: #e9cf7d; --gold-dark: #8a6c14;
+            --cv-bg: linear-gradient(165deg, #ffffff 0%, #ffffff 45%, #eef4f6 100%);
+            --gold: #b8975a; --gold-light: #e8dcb8; --gold-dark: #8a6d3a;
             --line-width: 1px;
             --adj-block-mb: 15px; --adj-li-mb: 3px; --adj-ul-m: 4px;
             --adj-section-mb: 12px; --adj-section-mt: 25px; --adj-contact-gap: 5px;
@@ -100,7 +101,7 @@
         #page-alert { display:none; position:fixed; top:20px; left:50%; transform:translateX(-50%); background:#dc3545; color:white; padding:12px 24px; border-radius:8px; z-index:99999; font-weight:bold; font-size:0.9rem; box-shadow:0 4px 15px rgba(0,0,0,0.3); }
 
         /* CV DESIGN - NE PAS MODIFIER */
-        #cv-page { width:210mm; height:297mm; min-height:297mm; background:white; position:relative; display:flex; flex-direction:column; box-shadow:0 0 25px rgba(0,0,0,0.25); box-sizing:border-box; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+        #cv-page { width:210mm; height:297mm; min-height:297mm; background:var(--cv-bg); position:relative; display:flex; flex-direction:column; box-shadow:0 0 25px rgba(0,0,0,0.25); box-sizing:border-box; -webkit-print-color-adjust:exact; print-color-adjust:exact; transition:background 0.3s; }
         .logo-hecg { position:absolute; top:75px; right:50px; width:120px; z-index:10; }
         .cv-header { display:flex; padding:40px 50px 25px; align-items:center; }
         .photo-wrap { width:135px; height:135px; padding:4px; background:var(--cv-gradient); display:flex; justify-content:center; align-items:center; flex-shrink:0; transition:background 0.3s; }
@@ -391,22 +392,23 @@
         }
     };
 
-    // Thème visuel du CV par diplôme : dégradés dans la charte HECG (bleu / orange / gris)
+    // Thème visuel du CV par diplôme : palette "bankable" raffinée (bleu / orange / gris de la charte HECG,
+    // tons adoucis, jamais de noir pur) + fond légèrement dégradé, presque blanc, teinté par diplôme/niveau.
     const cvThemes = {
-        "BTS CG 1":       { name:"#70a5aa", text:"#3f5071", accent:"#ed7d31", gradient:"linear-gradient(180deg, #70a5aa 0%, #22475d 100%)" },
-        "BTS CG 2":       { name:"#4b8188", text:"#2d3a52", accent:"#ed7d31", gradient:"linear-gradient(180deg, #4b8188 0%, #13232d 100%)" },
+        "BTS CG 1":       { name:"#5b8a9c", text:"#33465c", accent:"#d68a3d", gradient:"linear-gradient(160deg, #7fa8b3 0%, #2c4258 100%)", bg:"#eef4f6" },
+        "BTS CG 2":       { name:"#3f6b78", text:"#22333f", accent:"#c07a35", gradient:"linear-gradient(160deg, #4f7e8a 0%, #1c2b36 100%)", bg:"#e7eff1" },
 
-        "DCG 1": { name:"#e2894c", text:"#5a4a3c", accent:"#b4540f", gradient:"linear-gradient(180deg, #f3a367 0%, #c9601b 100%)" },
-        "DCG 2": { name:"#c9601b", text:"#4a3b2f", accent:"#9c4208", gradient:"linear-gradient(180deg, #d9722e 0%, #9c4208 100%)" },
-        "DCG 3": { name:"#a84e14", text:"#3c2f26", accent:"#7a3206", gradient:"linear-gradient(180deg, #b85a1f 0%, #6b2c05 100%)" },
+        "DCG 1": { name:"#c98a4a", text:"#5c4a3a", accent:"#a8632a", gradient:"linear-gradient(160deg, #e3b479 0%, #b06b2e 100%)", bg:"#f8efe0" },
+        "DCG 2": { name:"#b06b2e", text:"#4a3b2e", accent:"#8f531f", gradient:"linear-gradient(160deg, #cf9757 0%, #8f531f 100%)", bg:"#f4e7d2" },
+        "DCG 3": { name:"#8f531f", text:"#3c2f26", accent:"#6e3f16", gradient:"linear-gradient(160deg, #b8813f 0%, #6e3f16 100%)", bg:"#efdec1" },
 
-        "DSCG 1": { name:"#ed7d31", text:"#2d3b52", accent:"#3f5071", gradient:"linear-gradient(135deg, #ed7d31 0%, #22475d 100%)" },
-        "DSCG 2": { name:"#c9601b", text:"#1c2636", accent:"#22354a", gradient:"linear-gradient(135deg, #c9601b 0%, #12202c 100%)" },
+        "DSCG 1": { name:"#c9822f", text:"#2c3f52", accent:"#3f6178", gradient:"linear-gradient(135deg, #d69a55 0%, #2c4258 100%)", bg:"#f3ede3" },
+        "DSCG 2": { name:"#a8632a", text:"#1e2c3a", accent:"#2c4258", gradient:"linear-gradient(135deg, #b8813f 0%, #1c2b36 100%)", bg:"#ede5d8" },
 
-        "BTS GPME 1": { name:"#5b7c93", text:"#3f4750", accent:"#ed7d31", gradient:"linear-gradient(180deg, #7f9aad 0%, #333c44 100%)" },
-        "BTS GPME 2": { name:"#5b7c93", text:"#3f4750", accent:"#ed7d31", gradient:"linear-gradient(180deg, #7f9aad 0%, #333c44 100%)" },
+        "BTS GPME 1": { name:"#5b7182", text:"#3a4652", accent:"#c9822f", gradient:"linear-gradient(160deg, #7f95a3 0%, #37434d 100%)", bg:"#eef1f2" },
+        "BTS GPME 2": { name:"#5b7182", text:"#3a4652", accent:"#c9822f", gradient:"linear-gradient(160deg, #7f95a3 0%, #37434d 100%)", bg:"#eef1f2" },
 
-        "Bachelor CDSP": { name:"#3f5c6c", text:"#2a2f35", accent:"#ed7d31", gradient:"linear-gradient(160deg, #6c8fa3 0%, #3f5c6c 45%, #14181b 100%)" }
+        "Bachelor CDSP": { name:"#3f5361", text:"#28323a", accent:"#c9822f", gradient:"linear-gradient(150deg, #7f95a3 0%, #3f5361 50%, #232b31 100%)", bg:"#e6eaec" }
     };
 
     function applyCvTheme(dip) {
@@ -416,6 +418,7 @@
         root.style.setProperty('--cv-text', t.text);
         root.style.setProperty('--cv-accent', t.accent);
         root.style.setProperty('--cv-gradient', t.gradient);
+        root.style.setProperty('--cv-bg', `linear-gradient(165deg, #ffffff 0%, #ffffff 45%, ${t.bg} 100%)`);
     }
 
     let expCt = 0, eduCt = 0;
