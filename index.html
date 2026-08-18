@@ -1,4 +1,4 @@
-<!DOCTYPE html>  
+<!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
@@ -10,6 +10,9 @@
         :root {
             --hecg-teal: #70a5aa; --hecg-navy: #3f5071; --hecg-dark: #22475d;
             --hecg-orange: #ed7d31; --gradient: linear-gradient(180deg, #70a5aa 0%, #22475d 100%);
+            /* Couleurs du CV imprimé : recalculées par diplôme via applyCvTheme() */
+            --cv-name: #70a5aa; --cv-text: #3f5071; --cv-accent: #ed7d31;
+            --cv-gradient: linear-gradient(180deg, #70a5aa 0%, #22475d 100%);
             --line-width: 1px;
             --adj-block-mb: 15px; --adj-li-mb: 3px; --adj-ul-m: 4px;
             --adj-section-mb: 12px; --adj-section-mt: 25px; --adj-contact-gap: 5px;
@@ -93,28 +96,28 @@
         #cv-page { width:210mm; height:297mm; min-height:297mm; background:white; position:relative; display:flex; flex-direction:column; box-shadow:0 0 25px rgba(0,0,0,0.25); box-sizing:border-box; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
         .logo-hecg { position:absolute; top:75px; right:50px; width:120px; z-index:10; }
         .cv-header { display:flex; padding:40px 50px 25px; align-items:center; }
-        .photo-wrap { width:135px; height:135px; padding:4px; background:var(--gradient); display:flex; justify-content:center; align-items:center; flex-shrink:0; }
+        .photo-wrap { width:135px; height:135px; padding:4px; background:var(--cv-gradient); display:flex; justify-content:center; align-items:center; flex-shrink:0; transition:background 0.3s; }
         .photo-wrap img { width:100%; height:100%; object-fit:cover; background:#fff; }
         .header-main { flex:1; margin-left:30px; overflow:hidden; }
-        .p-name { color:var(--hecg-teal); font-weight:bold; margin:0; line-height:1.1; white-space:nowrap; }
-        .p-age { font-size:18px; color:var(--hecg-navy); margin-bottom:8px; }
-        .p-search { color:var(--hecg-navy); font-size:14px; margin:5px 0; line-height:1.2; max-width:380px; }
+        .p-name { color:var(--cv-name); font-weight:bold; margin:0; line-height:1.1; white-space:nowrap; transition:color 0.3s; }
+        .p-age { font-size:18px; color:var(--cv-text); margin-bottom:8px; }
+        .p-search { color:var(--cv-text); font-size:14px; margin:5px 0; line-height:1.2; max-width:380px; }
         .contact-column { display:flex; flex-direction:column; gap:var(--adj-contact-gap); margin-top:12px; font-size:11px; color:#444; max-width:380px; }
         .contact-item-row { display:flex; align-items:center; gap:8px; word-break:break-all; }
-        .contact-item-row i { color:var(--hecg-navy); font-size:12px; width:16px; text-align:center; }
+        .contact-item-row i { color:var(--cv-text); font-size:12px; width:16px; text-align:center; }
         .cv-container { display:flex; flex:1; padding:0 50px 20px; gap:35px; position:relative; min-height:0; }
         .col-left { width:34%; display:flex; flex-direction:column; min-height:0; }
-        .col-right { width:66%; border-left:var(--line-width) solid var(--hecg-orange); padding-left:25px; margin-top:25px; }
-        .section-box { background:var(--gradient) !important; color:white !important; padding:8px 12px; text-transform:uppercase; font-weight:bold; font-size:13px; margin:0 0 var(--adj-section-mb); position:relative; }
+        .col-right { width:66%; border-left:var(--line-width) solid var(--cv-accent); padding-left:25px; margin-top:25px; }
+        .section-box { background:var(--cv-gradient) !important; color:white !important; padding:8px 12px; text-transform:uppercase; font-weight:bold; font-size:13px; margin:0 0 var(--adj-section-mb); position:relative; transition:background 0.3s; }
         .col-left .section-box { margin-top:var(--adj-section-mt); }
-        .col-left .section-box::after { content:""; position:absolute; top:0; right:-36px; width:36px; height:var(--line-width); background:var(--hecg-orange); }
-        .col-right .section-box::before { content:""; position:absolute; top:0; left:-26px; width:26px; height:var(--line-width); background:var(--hecg-orange); }
+        .col-left .section-box::after { content:""; position:absolute; top:0; right:-36px; width:36px; height:var(--line-width); background:var(--cv-accent); }
+        .col-right .section-box::before { content:""; position:absolute; top:0; left:-26px; width:26px; height:var(--line-width); background:var(--cv-accent); }
         .cv-block { margin-bottom:var(--adj-block-mb); }
-        .cv-title { font-weight:bold; font-size:14px; color:var(--hecg-navy); display:flex; justify-content:space-between; }
+        .cv-title { font-weight:bold; font-size:14px; color:var(--cv-text); display:flex; justify-content:space-between; }
         .cv-sub { font-size:12.5px; color:#555; font-style:italic; margin-bottom:3px; }
         ul { padding-left:18px; margin:var(--adj-ul-m) 0; list-style:none; }
-        li { font-size:12px; color:var(--hecg-navy); margin-bottom:var(--adj-li-mb); position:relative; line-height:1.3; }
-        li::before { content:"•"; color:var(--hecg-orange); font-weight:bold; position:absolute; left:-14px; }
+        li { font-size:12px; color:var(--cv-text); margin-bottom:var(--adj-li-mb); position:relative; line-height:1.3; }
+        li::before { content:"•"; color:var(--cv-accent); font-weight:bold; position:absolute; left:-14px; }
         .footer-cv { margin-top:auto; padding-top:6px; flex-shrink:0; }
         .edition-stamp { position:absolute; bottom:10px; right:20px; font-size:9px; color:#aaa; }
 
@@ -205,7 +208,8 @@
             <option value="DCG 1">DCG 1</option>
             <option value="DCG 2">DCG 2</option>
             <option value="DCG 3">DCG 3</option>
-            <option value="DSCG">DSCG</option>
+            <option value="DSCG 1">DSCG 1</option>
+            <option value="DSCG 2">DSCG 2</option>
             <option value="Bachelor CDSP">Bachelor CDSP</option>
         </select>
         <input type="text"  id="tel"     placeholder="Téléphone" oninput="render()">
@@ -294,7 +298,7 @@
                 <div class="section-box">Centres d'intérêt</div><ul id="out-hobbies"></ul>
                 <div class="footer-cv">
                     <div class="section-box">Contact École</div>
-                    <div style="font-size:11.5px; color:var(--hecg-navy); line-height:1.5; padding-left:5px;">
+                    <div style="font-size:11.5px; color:var(--cv-text); line-height:1.5; padding-left:5px;">
                         <b>M. BENMOSTEFA - Directeur</b><br>📞 06 25 43 53 90<br>📧 contact@hecg.fr<br>🌐 www.hecg.fr
                     </div>
                 </div>
@@ -356,9 +360,37 @@
         levels: { "A1":"A1 - Débutant","A2":"A2 - Élémentaire","B1":"B1 - Intermédiaire","B2":"B2 - Intermédiaire avancé","C1":"C1 - Autonome","C2":"C2 - Maîtrise" },
         years: {
             "BTS GPME 1":"2026-2028","BTS CG 1":"2026-2028","BTS GPME 2":"2026-2027","BTS CG 2":"2026-2027",
-            "DCG 1":"2026-2029","DCG 2":"2026-2028","DCG 3":"2026-2027","DSCG":"2026-2028","Bachelor CDSP":"2026-2027"
+            "DCG 1":"2026-2029","DCG 2":"2026-2028","DCG 3":"2026-2027",
+            "DSCG 1":"2026-2028","DSCG 2":"2026-2027","Bachelor CDSP":"2026-2027"
         }
     };
+
+    // Thème visuel du CV par diplôme : dégradés dans la charte HECG (bleu / orange / gris)
+    const cvThemes = {
+        "BTS CG 1":       { name:"#70a5aa", text:"#3f5071", accent:"#ed7d31", gradient:"linear-gradient(180deg, #70a5aa 0%, #22475d 100%)" },
+        "BTS CG 2":       { name:"#4b8188", text:"#2d3a52", accent:"#ed7d31", gradient:"linear-gradient(180deg, #4b8188 0%, #13232d 100%)" },
+
+        "DCG 1": { name:"#e2894c", text:"#5a4a3c", accent:"#b4540f", gradient:"linear-gradient(180deg, #f3a367 0%, #c9601b 100%)" },
+        "DCG 2": { name:"#c9601b", text:"#4a3b2f", accent:"#9c4208", gradient:"linear-gradient(180deg, #d9722e 0%, #9c4208 100%)" },
+        "DCG 3": { name:"#a84e14", text:"#3c2f26", accent:"#7a3206", gradient:"linear-gradient(180deg, #b85a1f 0%, #6b2c05 100%)" },
+
+        "DSCG 1": { name:"#ed7d31", text:"#2d3b52", accent:"#3f5071", gradient:"linear-gradient(135deg, #ed7d31 0%, #22475d 100%)" },
+        "DSCG 2": { name:"#c9601b", text:"#1c2636", accent:"#22354a", gradient:"linear-gradient(135deg, #c9601b 0%, #12202c 100%)" },
+
+        "BTS GPME 1": { name:"#5b7c93", text:"#3f4750", accent:"#ed7d31", gradient:"linear-gradient(180deg, #7f9aad 0%, #333c44 100%)" },
+        "BTS GPME 2": { name:"#5b7c93", text:"#3f4750", accent:"#ed7d31", gradient:"linear-gradient(180deg, #7f9aad 0%, #333c44 100%)" },
+
+        "Bachelor CDSP": { name:"#3f5c6c", text:"#2a2f35", accent:"#ed7d31", gradient:"linear-gradient(160deg, #6c8fa3 0%, #3f5c6c 45%, #14181b 100%)" }
+    };
+
+    function applyCvTheme(dip) {
+        const t = cvThemes[dip] || cvThemes["BTS CG 1"];
+        const root = document.documentElement;
+        root.style.setProperty('--cv-name', t.name);
+        root.style.setProperty('--cv-text', t.text);
+        root.style.setProperty('--cv-accent', t.accent);
+        root.style.setProperty('--cv-gradient', t.gradient);
+    }
 
     let expCt = 0, eduCt = 0;
     let currentUserNom = '', currentUserPrenom = '', currentUserType = '';
@@ -471,6 +503,7 @@
         const dob = document.getElementById('dob').value;
         if(dob) document.getElementById('out-age').innerText = Math.floor((new Date() - new Date(dob)) / 31557600000);
         const dip = document.getElementById('diplome_select').value;
+        applyCvTheme(dip);
         document.getElementById('out-dip-label').innerText = dip;
         document.querySelectorAll('.dyn-dip-name').forEach(e => e.innerText = dip);
         document.getElementById('out-dip-year').innerText = db.years[dip];
@@ -664,7 +697,7 @@
         set('dob', data.dob); set('linkedin', data.linkedin); set('tel', data.tel);
         set('email', data.email); set('ville', data.ville);
         document.getElementById('vehicule').value = data.vehicule || 'Oui';
-        document.getElementById('diplome_select').value = data.diplome || 'BTS GPME 1';
+        document.getElementById('diplome_select').value = (data.diplome === 'DSCG' ? 'DSCG 1' : data.diplome) || 'BTS GPME 1';
 
         // Support ancien format (soft_extra) et nouveau (soft_extra1/2/3)
         set('soft_extra1',  data.soft_extra1  || data.soft_extra  || '');
